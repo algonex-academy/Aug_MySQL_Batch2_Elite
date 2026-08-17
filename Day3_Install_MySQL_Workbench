@@ -133,3 +133,21 @@ MySQL Workbench -> Lets You Control the Server
 - Enter your root password successfully
 - Run SELECT VERSION(); without any errors
 
+# Open your MySQL client and run:
+SELECT
+    VERSION() AS mysql_version,
+    CURRENT_USER() AS connected_user,
+    DATABASE() AS selected_database;
+###Do not ignore the output SQL folks endukantee working developer always knows:
+-> Which server they connected to
+-> Which user they connected as
+-> Which database is active
+-> Which database version is running
+
+###Now inspect the available databases:
+SHOW DATABASES;
+
+Create the training database: CREATE DATABASE quickcart_dev
+                              USE quickcart_dev;
+                              SELECT DATABASE() AS selected_database; -- quickcart_dev
+
