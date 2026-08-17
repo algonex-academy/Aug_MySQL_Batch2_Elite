@@ -11,13 +11,13 @@ Can you keep a diamond ring inside a car garage? -> Yes ->But it's a waste of sp
 
 ╰┈➤𝗠𝘆𝗦𝗤𝗟 𝗗𝗮𝘁𝗮 𝗧𝘆𝗽𝗲𝘀 𝗖𝗮𝘁𝗲𝗴𝗼𝗿𝗶𝗲𝘀
                                                                         MySQL Data Types
-                                                                        ├── Numeric
+                                                                        ├── Numeric Types
+                                                                      [ TINYINT -> small integers(-128 to 127), 
+                                                                       SMALLINT -> small integers
                                                                         ├── String
                                                                         ├── Date & Time
                                                                         ├── Boolean
-                                                                        ├── Binary
-                                                                        ├── JSON
-                                                                        ├── Spatial
+                                                                       
 -- PART 1 —Numeric Types (These store numbers)
 𝗗𝗮𝘁𝗮 𝗧𝘆𝗽𝗲        𝗦𝘆𝗻𝘁𝗮𝘅 enti?                    𝗦𝘁𝗼𝗿𝗲𝘀                        𝗥𝗲𝗮𝗹 𝗘𝘅𝗮𝗺𝗽𝗹𝗲     𝗪𝗵𝗲𝗿𝗲 𝗪𝗲 𝗨𝘀𝗲                                 
 TINYINT     | rating TINYINT         | Small numbers (-128 to 127) |     5             | Rating, Boolean flags (0/1), Age (sometimes) 
@@ -47,12 +47,12 @@ DOUBLE      | latitude DOUBLE        | High precision decimal      | 17.385044  
 
 ╰┈➤ 𝗣𝗔𝗥𝗧𝟮 -𝗦𝘁𝗿𝗶𝗻𝗴 𝗗𝗮𝘁𝗮 𝗧𝘆𝗽𝗲𝘀
 String Types
-├── CHAR
-├── VARCHAR
-├── TINYTEXT
-├── TEXT
-├── MEDIUMTEXT
-├── LONGTEXT
+├── CHAR(n) ->  Fixed-length text  
+├── VARCHAR(n) ->  Variable-length text
+├── TINYTEXT    
+├── TEXT      -> Long text
+├── MEDIUMTEXT  -> Very large text 
+├── LONGTEXT     -> Huge text 
 ├── ENUM
 ├── SET
 
@@ -83,10 +83,10 @@ YEAR      | manufacture_year YEAR | Year        | '2026'                        
  JSON  | address JSON                                 | JSON Object                 | {"city":"Bangalore","pin":560037} | API Responses, Flexible Configurations 
 
 𝗗𝗮𝘁𝗮 𝗧𝘆𝗽𝗲        𝗦𝘆𝗻𝘁𝗮𝘅                   𝗦𝘁𝗼𝗿𝗲𝘀                𝗥𝗲𝗮𝗹 𝗘𝘅𝗮𝗺𝗽𝗹𝗲 chudnadndi        𝗪𝗵𝗲𝗿𝗲 𝗪𝗲 𝗨𝘀𝗲                                
- BLOB  | profile_photo BLOB        | Binary Data | Image   | Images, Files, Documents        (Usually, production apps store files in object storage and keep only the file path in the database.)* 
+ BLOB  | profile_photo BLOB        | Binary Data | Image   | Images, Files, Documents        ( production apps store files in object storage and keep only the file path in the database) 
 
 -- saree oka table ready chedhaama marii::
-CREATE TABLE users (
+CREATE TABLE Algonex_users (
     user_id INT,
     full_name VARCHAR(100),
     email VARCHAR(255),
@@ -105,7 +105,7 @@ CREATE TABLE users (
 
 ╰┈➤ 𝘾𝙧𝙚𝙖𝙩𝙞𝙣𝙜 𝙔𝙤𝙪𝙧 𝙁𝙞𝙧𝙨𝙩 𝙏𝙖𝙗𝙡𝙚
 -- Before Writing SQL
-IImagine you're building an E-Commerce Application anukundhaam::
+Imagine you're building an E-Commerce Application anukundhaam::
 The Product Manager comes to you and says: "We need a user registration feature"
 
 As a backend developer mee first question enti?
@@ -142,32 +142,10 @@ Creates Structure
 No Data Yet (The table exists ->It's just empty)
 
 ╰┈➤𝗢𝘂𝗿 𝗙𝗶𝗿𝘀𝘁 𝗦𝗤𝗟 𝗦𝘁𝗮𝘁𝗲𝗺𝗲𝗻𝘁
-USE ecommerce_db;
-
--- Now create the table.
-CREATE TABLE users (
-    user_id INT,
-    full_name VARCHAR(100),
-    email VARCHAR(255),
-    mobile VARCHAR(15),
-    city VARCHAR(100),
-    created_at DATETIME
-);     -- Query OK, 0 rows affected
--- "Why does it say 0 rows affected?" -> we only created the structure -We haven't inserted any records yet
-
-╰┈➤ How Do We Verify It?
 SHOW TABLES; 
 DESCRIBE users;
-DESC users;
+DESC users;          
 
-𝗙𝗶𝗲𝗹𝗱           𝗧𝘆𝗽𝗲          𝗡𝘂𝗹𝗹    𝗞𝗲𝘆  𝗗𝗲𝗳𝗮𝘂𝗹𝘁      𝗘𝘅𝘁𝗿𝗮
- user_id    | int          | YES  |     | NULL        
- full_name  | varchar(100) | YES  |     | NULL           
- email      | varchar(255) | YES  |     | NULL           
- mobile     | varchar(15)  | YES  |     | NULL           
- city       | varchar(100) | YES  |     | NULL           
- created_at | datetime     | YES  |     | NULL           
--- ikkada what are Null, Key, Default, and Extra?"
 Field -> Column name
 Type -> Data type
 Null -> Whether the column can be left empty
@@ -176,8 +154,8 @@ Default -> Value MySQL uses if none is provided
 Extra -> Additional behaviors (like auto-increment)
 
 ╰┈➤ Enthasepuu ee nakkala veta padaa Create your first production-style table
-CREATE TABLE Algonex_Aug (
-    customer_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE Algonex_Crew (
+    crew_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL,
     phone VARCHAR(20) NULL,
@@ -197,6 +175,7 @@ CREATE TABLE Algonex_Aug (
 SHOW TABLES;
 DESCRIBE Algonex_Aug;
 SHOW CREATE TABLE Algonex_Aug;
+select * from Algonex_Crew;
 
 ╰┈➤ Soo ippudu veta aypoindi veta elaa chesamo let's Understand every column::
 -- customer_id: customer_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
@@ -228,7 +207,7 @@ updated_at TIMESTAMP NOT NULL
     ON UPDATE CURRENT_TIMESTAMP -- Automatically changes when the row is updated
 
 ╰┈➤ Insert your first records
-INSERT INTO customers (
+INSERT INTO Algonex_Crew (
     full_name,
     email,
     phone
