@@ -146,3 +146,41 @@ A Row is one complete record
 A Column defines one type of information
 A Field is one individual value
 Data Types define what kind of values each column can store ardamindhaaa...
+
+
+MySQL
+│
+├── Server
+│   ├── Users
+│   ├── Permissions
+│   ├── Connections
+│   └── Configuration
+│
+├── Database / Schema
+│   ├── Tables
+│   │   ├── Columns
+│   │   │   ├── Data type
+│   │   │   ├── Default value
+│   │   │   └── Nullability
+│   │   │
+│   │   ├── Rows
+│   │   ├── Constraints
+│   │   │   ├── PRIMARY KEY
+│   │   │   ├── UNIQUE
+│   │   │   ├── FOREIGN KEY
+│   │   │   └── CHECK
+│   │   │
+│   │   └── Indexes
+│   │
+│   ├── Views
+│   ├── Procedures
+│   ├── Functions
+│   └── Triggers
+│
+└── SQL commands
+    ├── Define structure
+    ├── Read data
+    ├── Change data
+    ├── Control transactions
+    ├── Control permissions
+    └── Inspect and diagnose
