@@ -175,3 +175,202 @@ Key -> Whether the column has a special role (like Primary Key)
 Default -> Value MySQL uses if none is provided
 Extra -> Additional behaviors (like auto-increment)
 
+╰┈➤ Enthasepuu ee nakkala veta padaa Create your first production-style table
+CREATE TABLE Algonex_Aug (
+    customer_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(20) NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL
+        DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_customers
+        PRIMARY KEY (customer_id),
+
+    CONSTRAINT uq_customers_email
+        UNIQUE (email)
+);
+
+SHOW TABLES;
+DESCRIBE Algonex_Aug;
+SHOW CREATE TABLE Algonex_Aug;
+
+╰┈➤ Soo ippudu veta aypoindi veta elaa chesamo let's Understand every column::
+-- customer_id: customer_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
+Purpose: Gives every customer a stable identity
+          Cannot be NULL
+          Cannot be negative
+          Is automatically generated
+          Is the primary key
+-- Ikkada do not use an email address as the primary key endukante Emails can change, are larger than numeric identifiersand expose business data throughout relationships
+
+-- full_name: full_name VARCHAR(100) NOT NULL
+-> VARCHAR(100) stores variable-length text up to the declared limit
+-> NOT NULL means the value must be present.
+
+-- email: email VARCHAR(255) NOT NULL
+-> The unique constraint prevents two customer rows from using the same email: CONSTRAINT uq_customers_email UNIQUE (email)
+-- Application validation may check this first, but the database remains the final authority
+
+-- phone: phone VARCHAR(20) NULL
+Telephone numbers are identifiers, not quantities. You do not add, subtract, or average telephone numbers. They may also contain country codes, leading zeros, spaces, or formatting characters
+
+-- status: status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE'
+When an insert omits status- MySQL supplies ACTIVE
+-> Later we will improve how valid status values are controlled chupisthanu ok
+
+-- Timestamps: created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP -- Records creation time
+updated_at TIMESTAMP NOT NULL
+    DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP -- Automatically changes when the row is updated
+
+╰┈➤ Insert your first records
+INSERT INTO customers (
+    full_name,
+    email,
+    phone
+)
+VALUES (
+    'Anitha jama',
+    'anitha.jama@example.com',
+    '+91-9000000001'
+);
+
+-- Saripooovu kadaa Ippudu Insert several rows:
+INSERT INTO customers (
+    full_name,
+    email,
+    phone,
+    status
+)
+VALUES
+    (
+        'Nanda Das',
+        'nanda.das@example.com',
+        '+91-9000000002',
+        'ACTIVE'
+    ),
+    (
+        'Sanjana Singh',
+        'sanjana.singh@example.com',
+        NULL, -- Notice that NULL was used for Sanjana’s unknown phone number
+        'ACTIVE'
+    ),
+    (
+        'Varun Ravath',
+        'varun.ravath@example.com',
+        '+91-9000000004',
+        'INACTIVE'
+    );
+
+╰┈➤ Read the data
+SELECT
+    customer_id,
+    full_name,
+    email, phone,
+    status, created_at
+FROM customers
+ORDER BY customer_id;
+
+-- Find active customers:
+SELECT
+    customer_id,
+    full_name,
+    email
+FROM customers
+WHERE status = 'ACTIVE'
+ORDER BY full_name;
+
+-- Find customers without a phone number:
+SELECT
+    customer_id,
+    full_name,
+    email
+FROM Algonex_Aug
+WHERE phone IS NULL; -- Error vachindaa??
+-- IS NULL or IS NOT NULL undaali
+
+╰┈➤ Okavela Sanjana contact isthee Update it safely:
+SELECT
+    customer_id,
+    full_name,
+    email,
+    phone
+FROM Algonex_Aug
+WHERE email = 'sanjana.singh@example.com'; -- Idi just data chudadaaniki
+
+-- Ippudu test the update inside a transaction:
+START TRANSACTION;
+
+UPDATE Algonex_Aug
+SET phone = '+91-9836402833'
+WHERE email = 'meera.singh@example.com';
+
+SELECT
+    customer_id,
+    full_name,
+    email,
+    phone
+FROM Algonex_Aug
+WHERE email = 'meera.singh@example.com';
+
+ROLLBACK; -- the update is undone kadaa chusaara??
+
+START TRANSACTION;
+UPDATE Algonex_Aug
+SET phone = '+91-9000000003'
+WHERE email = 'meera.singh@example.com';
+
+COMMIT; -- ippudu chudandi update ayuntaay
+╰┈➤Later we will discuss where MySQL transactions work- where implicit commits happenand why database engines matter
+-- Ilaaa Week1 nundee will work as a real SQL Developer ok
+
+
+╰┈➤ Saree ippudu konni mistakes chedhaama READY?? -- Break teeskondi
+INSERT INTO Algonex_Aug (
+    full_name,
+    email
+)
+VALUES (
+    'Duplicated name Anitha',
+   'anitha.jama@example.com'
+); -- Saree enduku fail ayindhoo cheppagalaraa??
+
+
+INSERT INTO Algonex_Aug (
+    full_name,
+    email
+)
+VALUES (
+    NULL,
+    'missing.name@example.com'
+); -- Endukantee full_name is NOT NULL kadaa
+╰┈➤ A professional SQL developer does not merely celebrate successful queries
+--they deliberately test invalid input and confirm that the database rejects it ardamindaa
+
+╰┈➤  August 17 Assignment (Do not copy a completed answer from anywhere Sareena try cheyandii)
+Using the Algonex_Aug table:
+-> Insert five additional customers
+-> At least one customer must have no phone number
+-> At least one customer must have status INACTIVE
+-> Write a query returning only active customers
+-> Sort active customers by newest first
+-> Return the three newest customers
+-> Find all customers whose phone number is missing
+-> Change one inactive customer to active
+-> Attempt to insert a duplicate email and record the exact error
+-> Attempt to insert a row without full_name and record the exact error
+
+
+-- Ivi alochinchandiii::
+1. Why should customer_id be the primary key instead of email?
+2. What is the difference between NULL and an empty string?
+3. What problem does the UNIQUE constraint solve?
+4. What could happen if UPDATE is executed without WHERE?
+5. Why is phone stored as VARCHAR rather than INT?
+6. What is the purpose of created_at and updated_at?
+7. What is the difference between COMMIT and ROLLBACK?
+
