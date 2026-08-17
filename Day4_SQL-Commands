@@ -1,0 +1,47 @@
+Data type   -> What kind of value can this column store?
+Constraint  -> What rules must that value obey?
+SQL command -> What operation are we asking MySQL to perform?
+
+For exampleki : price DECIMAL(10, 2) NOT NULL DEFAULT 0.00
+Break it apart:
+price             -> Column name
+DECIMAL(10, 2)   -> Data type
+NOT NULL         -> Nullability rule
+DEFAULT 0.00     -> Default-value rule -- NOT NULL, PRIMARY KEY, UNIQUE, and FOREIGN KEY are not data types
+
+SQL Commands
+│
+├── DDL — Data Definition Language
+│   ├── CREATE
+│   ├── ALTER
+│   ├── RENAME
+│   ├── TRUNCATE
+│   └── DROP
+│
+├── DML — Data Manipulation Language
+│   ├── INSERT
+│   ├── UPDATE
+│   └── DELETE
+│
+├── DQL — Data Query Language
+│   └── SELECT
+│
+├── TCL — Transaction Control Language
+│   ├── START TRANSACTION
+│   ├── COMMIT
+│   ├── ROLLBACK
+│   ├── SAVEPOINT
+│   └── ROLLBACK TO SAVEPOINT
+│
+├── DCL — Data Control Language
+│   ├── GRANT
+│   └── REVOKE
+│
+└── Utility / Administration
+    ├── USE
+    ├── SHOW
+    ├── DESCRIBE
+    ├── EXPLAIN
+    ├── ANALYZE TABLE
+    └── SET
+
