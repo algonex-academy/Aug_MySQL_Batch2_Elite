@@ -57,17 +57,19 @@ Username: Anitha_mom_princess
 Password: ********
 
 Ikkada the flow enti marii:
-Instagram App
-  |
-Backend API
-   |
-MySQL Server
-    |
-Checks Users Table
-     |
-Returns Result
-      |
-Login Successful
+Instagram App                  Browser or mobile app
+  |                                |
+Backend API                    Backend API
+   |                               |
+MySQL Server                   MySQL driver
+    |                              |
+Checks Users Table            Connection pool
+     |                             |
+Returns Result                MySQL server
+      |                            |
+Login Successful              Database/schema - Table and indexes
+                                                     |
+                                                  Storage
 Ikkada The mobile app never talks directly to MySQL -> The backend sits in between
 ENDUKUUU?:: Because exposing the database directly would be a major security risk kadaa soo
 
@@ -82,10 +84,19 @@ You can even use different tools like:
 - 𝙥𝙝𝙥𝙈𝙮𝘼𝙙𝙢𝙞𝙣
 - 𝙑𝙎 𝘾𝙤𝙙𝙚 𝙎𝙌𝙇 𝙚𝙭𝙩𝙚𝙣𝙨𝙞𝙤𝙣𝙨 -> All of them can connect to the same MySQL Server
 
+╰┈➤SQL versus MySQL
+#SQL is the language used to define, query, and modify relational data
+# MySQL is a relational database management system that understands SQL and provides storage, users, permissions, transactions, indexes, logging, and server processes
+SQL     = language
+MySQL   = software/database server
+Database = logical container
+Table   = structured collection of records
+Row     = one record(row represents one customer)
+Column  = one attribute(coulmn represents one property)
+
 ╰┈➤Installing 𝗠𝘆𝗦𝗤𝗟
-We'll install:
-MySQL Server
-MySQL Workbench
+We'll install: MySQL Server
+              MySQL Workbench
 
 During installation, pay attention to:
 - Root password
