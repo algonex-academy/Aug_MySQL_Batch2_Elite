@@ -1,0 +1,112 @@
+###Practical lab— Commands and data types together
+
+CREATE DATABASE IF NOT EXISTS mysql_learning;
+USE mysql_learning;
+
+CREATE TABLE datatype_lab (
+    record_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+    short_code CHAR(3) NOT NULL,
+    display_name VARCHAR(100) NOT NULL,
+
+    quantity INT UNSIGNED NOT NULL DEFAULT 0,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    measured_weight DOUBLE NULL,
+
+    event_date DATE NULL,
+    occurred_at DATETIME NULL,
+
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    notes TEXT NULL,
+    metadata JSON NULL,
+
+    CONSTRAINT pk_datatype_lab
+        PRIMARY KEY (record_id),
+
+    CONSTRAINT uq_datatype_lab_short_code
+        UNIQUE (short_code),
+
+    CONSTRAINT chk_datatype_lab_price
+        CHECK (unit_price >= 0),
+
+    CONSTRAINT chk_datatype_lab_is_active
+        CHECK (is_active IN (0, 1))
+);
+
+-- Chesinaa Tableni inspect cheyu
+DESCRIBE datatype_lab;
+SHOW CREATE TABLE datatype_lab;
+
+-- Datani inset cheyu
+INSERT INTO datatype_lab (
+    short_code,
+    display_name,
+    quantity,
+    unit_price,
+    measured_weight,
+    event_date,
+    occurred_at,
+    is_active,
+    notes,
+    metadata
+)
+VALUES (
+    'MOU',
+    'Wireless Mouse', 25,
+    799.00, 0.145,
+    '2026-08-20',
+    '2026-08-17 15:30:00', TRUE,
+    'Initial learning record',
+    JSON_OBJECT(
+        'color', 'black',
+        'wireless', TRUE,
+        'battery_hours', 30
+    )
+);
+
+-- Ippudu ready chey with SELECT
+SELECT
+    record_id,
+    short_code,
+    display_name,
+    quantity,
+    unit_price,
+    quantity * unit_price AS inventory_value,
+    event_date,
+    is_active
+FROM datatype_lab;
+
+-- Ippudu oka TRANSACTIONthoo test cheyy::
+START TRANSACTION;
+
+UPDATE datatype_lab
+SET unit_price = 749.00
+WHERE short_code = 'MOU';
+
+SELECT
+    record_id,
+    short_code,
+    unit_price
+FROM datatype_lab
+WHERE short_code = 'MOU';
+
+ROLLBACK;
+
+-- Verify that the old price returned:
+SELECT
+    record_id,
+    short_code,
+    unit_price
+FROM datatype_lab
+WHERE short_code = 'MOU';
+
+-- Add a column using DDL:
+ALTER TABLE datatype_lab
+ADD COLUMN created_at TIMESTAMP NOT NULL
+    DEFAULT CURRENT_TIMESTAMP;
+
+
+-- Inspect it again:
+SHOW CREATE TABLE datatype_lab;
+
+
