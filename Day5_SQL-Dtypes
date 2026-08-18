@@ -10,24 +10,63 @@ Can you keep a diamond ring inside a car garage? -> Yes ->But it's a waste of sp
 -> How much storage is required
 
 ╰┈➤𝗠𝘆𝗦𝗤𝗟 𝗗𝗮𝘁𝗮 𝗧𝘆𝗽𝗲𝘀 𝗖𝗮𝘁𝗲𝗴𝗼𝗿𝗶𝗲𝘀
-                                                                        MySQL Data Types
-                                                                        ├── Numeric Types
-                                                                      [ TINYINT -> small integers(-128 to 127), 
-                                                                       SMALLINT -> small integers
-                                                                        ├── String
-                                                                        ├── Date & Time
-                                                                        ├── Boolean
+MySQL Data Types
+│
+├── Numeric
+│   ├── Whole numbers
+│   │   ├── TINYINT
+│   │   ├── SMALLINT
+│   │   ├── MEDIUMINT
+│   │   ├── INT
+│   │   └── BIGINT
+│   │
+│   ├── Exact decimal numbers
+│   │   └── DECIMAL / NUMERIC
+│   │
+│   ├── Approximate decimal numbers
+│   │   ├── FLOAT
+│   │   └── DOUBLE
+│   │
+│   └── Bits
+│       └── BIT
+├── Character and binary
+│   ├── Fixed-length text
+│   │   └── CHAR
+│   ├── Variable-length text
+│   │   └── VARCHAR
+│   ├── Long text
+│   │   ├── TINYTEXT
+│   │   ├── TEXT
+│   │   ├── MEDIUMTEXT
+│   │   └── LONGTEXT
+│   ├── Binary values
+│   │   ├── BINARY
+│   │   ├── VARBINARY
+│   │   └── BLOB family
+│   └── Controlled text sets
+│       ├── ENUM
+│       └── SET
+├── Date and time
+│   ├── DATE
+│   ├── TIME
+│   ├── DATETIME
+│   ├── TIMESTAMP
+│   └── YEAR
+│
+├── Semi-structured
+    └── JSON
                                                                        
 -- PART 1 —Numeric Types (These store numbers)
 𝗗𝗮𝘁𝗮 𝗧𝘆𝗽𝗲        𝗦𝘆𝗻𝘁𝗮𝘅 enti?                    𝗦𝘁𝗼𝗿𝗲𝘀                        𝗥𝗲𝗮𝗹 𝗘𝘅𝗮𝗺𝗽𝗹𝗲     𝗪𝗵𝗲𝗿𝗲 𝗪𝗲 𝗨𝘀𝗲                                 
-TINYINT     | rating TINYINT         | Small numbers (-128 to 127) |     5             | Rating, Boolean flags (0/1), Age (sometimes) 
-SMALLINT     | department_id SMALLINT | Small integers              |   101           | Department IDs, Branch IDs                   
-INT          | user_id INT            | Whole numbers               |  10125          | User ID, Product ID, Quantity, Order Count   
-BIGINT       | order_id BIGINT        | Very large integers         | 9876543210123   | Order IDs, Transaction IDs, Large Systems    
+TINYINT     | rating TINYINT         | Small numbers 1 byte(-128 to 127)              |     5             | Rating, Boolean flags (0/1), Age (sometimes) 
+SMALLINT     | department_id SMALLINT | Small integers 2 bytes(-32,768 to 32,767)             |   101           | Department IDs, Branch IDs                   
+INT          | user_id INT            | Whole numbers-4 bytes About -(About -2.1 billion to 2.1 billion)              |  10125          | User ID, Product ID, Quantity, Order Count   
+BIGINT       | order_id BIGINT        | Very large integers-BIGINT8 bytes(Very large range)      | 9876543210123   | Order IDs, Transaction IDs, Large Systems    
 DECIMAL(M,D) | price DECIMAL(10,2)    | Exact decimal numbers       | 59999.99        | Product Price, Salary, Bank Balance          
 FLOAT       | temperature FLOAT      | Approximate decimal         | 36.75           | Temperature, Scientific Data                 
 DOUBLE      | latitude DOUBLE        | High precision decimal      | 17.385044       | GPS Coordinates, Scientific Calculations     
 
+-> UNSIGNED removes negative values and increases the positive range
 𝗙𝗶𝗲𝗹𝗱 𝗡𝗮𝗺𝗲              𝗥𝗲𝗰𝗼𝗺𝗺𝗲𝗻𝗱𝗲𝗱 𝗗𝗮𝘁𝗮 𝗧𝘆𝗽𝗲                                            𝗪𝗵𝘆? Batch2                                                  
  First Name          | VARCHAR(50)                                                  | Variable-length text                                      
  Last Name           | VARCHAR(50)                                                  | Variable-length text                                      
@@ -71,6 +110,8 @@ TIME      | start_time TIME       | Time only   | '09:30:00'                    
 DATETIME  | created_at DATETIME   | Date + Time | '2026-08-06 10:30:45'                     Registration Time, Order Time    
 TIMESTAMP | updated_at TIMESTAMP  | Date + Time | '2026-08-06 10:30:45'                    Last Updated Time, Audit Logs    
 YEAR      | manufacture_year YEAR | Year        | '2026'                                   Manufacturing Year, Passing Year 
+-> Do not use TEXT automatically for every string
+-> Fields such as email, status, SKU, and names normally have reasonable limits and should generally be VARCHAR
 
 ╰┈➤Boolean Data Type
 𝗗𝗮𝘁𝗮 𝗧𝘆𝗽𝗲        𝗦𝘆𝗻𝘁𝗮𝘅                   𝗦𝘁𝗼𝗿𝗲𝘀                𝗥𝗲𝗮𝗹 𝗘𝘅𝗮𝗺𝗽𝗹𝗲                       𝗪𝗵𝗲𝗿𝗲 𝗪𝗲 𝗨𝘀𝗲 chudnadi                                
@@ -343,6 +384,34 @@ Using the Algonex_Aug table:
 -> Attempt to insert a duplicate email and record the exact error
 -> Attempt to insert a row without full_name and record the exact error
 
+
+Customer ID    | BIGINT UNSIGNED | Large positive identity 
+Customer name  | VARCHAR(100)    | Variable-length text 
+ Email         | VARCHAR(255)    | Textual identifier 
+ Phone         | VARCHAR(20)     | Not used for arithmetic 
+ Date of birth | DATE            | Date without time 
+ Product SKU   | VARCHAR(64)     | Business identifier containing letters/digits 
+ Country code  | CHAR(2)         | Consistent two-character code 
+ Price         | DECIMAL(12,2)   | Exact currency value 
+ Discount percentage | `DECIMAL(5,2) | Exact percentage 
+ Stock quantity | INT UNSIGNED      | Nonnegative whole number 
+ Rating         | TINYINT UNSIGNED  | Small bounded integer 
+ Active flag    | BOOLEAN plus 'CHECK' | Yes/no business state 
+ Description    | TEXT                 | Potentially long text 
+ Product attributes | JSON             | Variable optional metadata 
+ Created time       | TIMESTAMP or UTC 'DATETIME' | Event timestamp, depending on timezone policy 
+
+-- Ivi Freshers chesee mistakes
+ phone BIGINT        | phone VARCHAR(20)       | Telephone numbers are identifiers 
+ price FLOAT         | price DECIMAL(12,2)     | Money requires exact precision 
+ age INT             | date_of_birth DATE      | Age changes 
+ created_date VARCHAR(30) | DATE, DATETIME or TIMESTAMP    | Use date operations and validation 
+ Every field as VARCHAR(255) | Intentional sizes and types | Express the business domain 
+ is_active VARCHAR(10) | BOOLEAN plus constraint           | Yes/no state 
+ Product columns inside one JSON document      | Proper relational columns | Core fields need constraints, joins, and indexes 
+ UPDATE without WHERE | Preview and target rows explicitly | Prevent mass updates 
+ Casual TRUNCATE      | Treat it as destructive DDL        | It causes an implicit commit 
+ Assuming INT(11) means 11 digits| Use INT and constraints | Display width is not range 
 
 -- Ivi alochinchandiii::
 1. Why should customer_id be the primary key instead of email?
