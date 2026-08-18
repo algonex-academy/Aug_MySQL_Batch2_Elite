@@ -109,4 +109,43 @@ ADD COLUMN created_at TIMESTAMP NOT NULL
 -- Inspect it again:
 SHOW CREATE TABLE datatype_lab;
 
+--- Oka anni chesaaru kadaa ippudu will see checkpoints(start-> end flow)::
+A. Choose the data typ:
+1. employee_id
+2. employee_phone
+3. employee_date_of_birth
+4. monthly_salary
+5. attendance_percentage
+6. number_of_login_attempts
+7. profile_description
+8. account_is_locked
+9. employee_joined_at
+10. optional_application_metadata
+11. Indian postal code
+12. three-letter currency code
+
+B. Classify cheskondi each commandni: (Antee which command we should use anii)
+1. CREATE TABLE
+2. SELECT
+3. UPDATE
+4. COMMIT
+5. GRANT
+6. DESCRIBE
+7. TRUNCATE TABLE
+8. INSERT
+9. ROLLBACK
+10. EXPLAIN
+11. ALTER TABLE
+12. DELETE
+
+C. Inspect your MySQL environment:
+SELECT
+    VERSION() AS mysql_version,
+    @@sql_mode AS sql_mode,
+    @@autocommit AS autocommit_enabled,
+    @@session.time_zone AS session_time_zone,
+    DATABASE() AS selected_database;
+
+
+
 
