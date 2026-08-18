@@ -1,0 +1,29 @@
+╰┈➤ MySQL Commands
+
+Mundhhu Command, statement, clause, function and constraint ardam cheskondii:
+SELECT
+    customer_id,
+    full_name
+FROM customers
+WHERE status = 'ACTIVE'
+ORDER BY full_name;
+
+SELECT       -> Keyword and clause
+FROM         -> Clause
+WHERE        -> Clause
+ORDER BY     -> Clause
+customers    -> Table identifier
+status       -> Column identifier
+'ACTIVE'     -> String literal
+=            -> Comparison operator
+;            -> Statement terminator
+
+-- Statement: complete instruction sent to MySQL
+DELETE FROM customers
+WHERE customer_id = 10;
+
+-- Clause: A part of a statement(WHERE customer_id = 10)
+-- Function: Performs a calculation or transformation(COUNT(*), UPPER(full_name), CURRENT_TIMESTAMP)
+-- Constraint: A rule applied to data(PRIMARY KEY, FOREIGN KEY, UNIQUE, NOT NULL, CHECK)
+-- Operator: Compares or calculates values(=, <>, >, <, >=, <=, +, -, *, /, AND, OR, NOT)
+
