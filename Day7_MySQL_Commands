@@ -27,3 +27,106 @@ WHERE customer_id = 10;
 -- Constraint: A rule applied to data(PRIMARY KEY, FOREIGN KEY, UNIQUE, NOT NULL, CHECK)
 -- Operator: Compares or calculates values(=, <>, >, <, >=, <=, +, -, *, /, AND, OR, NOT)
 
+##MySQL command decision tree
+What do I need to do?
+│
+├── Inspect the server or database
+│   ├── SHOW DATABASES
+│   ├── SHOW TABLES
+│   ├── DESCRIBE
+│   └── SHOW CREATE TABLE
+│
+├── Select the working database
+│   └── USE
+│
+├── Create a database object
+│   └── CREATE
+│
+├── Change an object's structure
+│   ├── ALTER
+│   └── RENAME
+│
+├── Add rows
+│   └── INSERT
+│
+├── Read rows
+│   └── SELECT
+│
+├── Change existing rows
+│   └── UPDATE
+│
+├── Remove selected rows
+│   └── DELETE
+│
+├── Accept or cancel data changes
+│   ├── COMMIT
+│   ├── ROLLBACK
+│   └── SAVEPOINT
+│
+├── Manage permissions
+│   ├── CREATE USER
+│   ├── GRANT
+│   └── REVOKE
+│
+├── Investigate query performance
+│   └── EXPLAIN
+│
+├── Empty an entire table
+│   └── TRUNCATE
+│
+└── Destroy a database object
+    └── DROP
+
+-- Idii mee Traditional commands
+MySQL Commands
+│
+├── DDL — Data Definition Language
+│   ├── CREATE
+│   ├── ALTER
+│   ├── RENAME
+│   ├── TRUNCATE
+│   └── DROP
+│
+├── DML — Data Manipulation Language
+│   ├── INSERT
+│   ├── UPDATE
+│   └── DELETE
+│
+├── DQL — Data Query Language
+│   └── SELECT
+│
+├── TCL — Transaction Control Language
+│   ├── START TRANSACTION
+│   ├── COMMIT
+│   ├── ROLLBACK
+│   ├── SAVEPOINT
+│   ├── ROLLBACK TO SAVEPOINT
+│   └── RELEASE SAVEPOINT
+│
+├── DCL — Data Control Language
+│   ├── GRANT
+│   └── REVOKE
+│
+├── Account management
+│   ├── CREATE USER
+│   ├── ALTER USER
+│   └── DROP USER
+│
+└── Utility and administration
+    ├── USE
+    ├── SHOW
+    ├── DESCRIBE
+    ├── EXPLAIN
+    ├── SET
+    └── ANALYZE TABLE
+
+1. DDL — Data Definition Language (DDL changes the structure of the database)
+It operates on objects such as: Databases
+                                Tables
+                                Columns
+                                Indexes
+                                Views
+                                Procedures
+                                Functions
+                                Triggers
+
