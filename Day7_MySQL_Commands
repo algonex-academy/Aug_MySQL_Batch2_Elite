@@ -2,9 +2,9 @@
 
 Mundhhu Command, statement, clause, function and constraint ardam cheskondii:
 SELECT
-    customer_id,
+    client_id,
     full_name
-FROM customers
+FROM clients
 WHERE status = 'ACTIVE'
 ORDER BY full_name;
 
@@ -103,7 +103,7 @@ MySQL Commands
 │   ├── ROLLBACK TO SAVEPOINT
 │   └── RELEASE SAVEPOINT
 │
-├── DCL — Data Control Language
+├── DCL — Data Control Language(privileges/access)
 │   ├── GRANT
 │   └── REVOKE
 │
