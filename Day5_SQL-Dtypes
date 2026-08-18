@@ -61,7 +61,7 @@ MySQL Data Types
 TINYINT     | rating TINYINT         | Small numbers 1 byte(-128 to 127)              |     5             | Rating, Boolean flags (0/1), Age (sometimes) 
 SMALLINT     | department_id SMALLINT | Small integers 2 bytes(-32,768 to 32,767)             |   101           | Department IDs, Branch IDs                   
 INT          | user_id INT            | Whole numbers-4 bytes About -(About -2.1 billion to 2.1 billion)              |  10125          | User ID, Product ID, Quantity, Order Count   
-BIGINT       | order_id BIGINT        | Very large integers-BIGINT8 bytes(Very large range)      | 9876543210123   | Order IDs, Transaction IDs, Large Systems    
+BIGINT       | order_id BIGINT        | Very large integers-BIGINT 8 bytes(Very large range)      | 9876543210123   | Order IDs, Transaction IDs, Large Systems    
 DECIMAL(M,D) | price DECIMAL(10,2)    | Exact decimal numbers       | 59999.99        | Product Price, Salary, Bank Balance          
 FLOAT       | temperature FLOAT      | Approximate decimal         | 36.75           | Temperature, Scientific Data                 
 DOUBLE      | latitude DOUBLE        | High precision decimal      | 17.385044       | GPS Coordinates, Scientific Calculations     
@@ -219,7 +219,7 @@ SHOW CREATE TABLE Algonex_Aug;
 select * from Algonex_Crew;
 
 ╰┈➤ Soo ippudu veta aypoindi veta elaa chesamo let's Understand every column::
--- customer_id: customer_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
+-- crew_id: crew_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
 Purpose: Gives every customer a stable identity
           Cannot be NULL
           Cannot be negative
