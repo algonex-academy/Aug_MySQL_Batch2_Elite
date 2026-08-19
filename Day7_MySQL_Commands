@@ -130,7 +130,7 @@ DROP
 
 ##CREATE: CREATE makes a new database object
 -- Create a database: CREATE DATABASE quickcart_dev;
-                    CREATE DATABASE IF NOT EXISTS quickcart_dev; -- IF NOT EXISTS prevents an error when the database already exists aythee
+                    CREATE DATABASE IF NOT EXISTS quickcart_dev; -- IF NOT EXISTS prevents an error when the DB already exists 
 -- Create a table
 CREATE TABLE customers (
     customer_id INT PRIMARY KEY,
@@ -156,7 +156,7 @@ CREATE TABLE    -> create a data structure
 CREATE INDEX    - Create an access path
 CREATE VIEW     -> create a stored query definition
 
-##ALTER- ALTER changes an existing object
+##ALTER- ALTER changes an existing DB objects
 -- Typical table changes include: Add a column
                                 Remove a column
                                 Rename a column
@@ -182,18 +182,18 @@ ALTER TABLE customers
 ADD CONSTRAINT uq_customers_email
 UNIQUE (email);
 
-##RENAME: Renames an object
-RENAME TABLE customers TO application_customers;
+##RENAME: Renames a DB object names
+RENAME TABLE Algonex TO AlgonexITSolutions; -- Table Renaming
 
 -- You can also rename a column through ALTER TABLE:
-ALTER TABLE application_customers
-RENAME COLUMN full_name TO customer_name;
+ALTER TABLE Algonex_applications
+RENAME COLUMN full_name TO Intern_name;
 
-##TRUNCATE: Removes every row from a table while retaining the table definition
-TRUNCATE TABLE customers;
+##TRUNCATE: Removes every row/data from a table while retaining the table definition
+TRUNCATE TABLE Algonex_applications;
 
-It does not accept a WHERE condition:
-TRUNCATE TABLE customers
+-- It does not accept a WHERE condition:
+TRUNCATE TABLE Algonex_applications
 WHERE status = 'INACTIVE'; -- Invalid
 
 -- Use it for situations such as:
@@ -201,18 +201,19 @@ WHERE status = 'INACTIVE'; -- Invalid
 -> Resetting an isolated development table
 -> Removing all temporary imported data
 -> Do not casually use it on a production transactional table
+=> The changes for TRUNCATE is permanent without any ROLLBACK/Backup for the row data
 
-# DROP: Destroys an object
+# DROP: Destroys an object from Database
 -- Drop a table
-DROP TABLE customers; -- This removes: mana table definition, All rows, Indexes, constraints belonging to the table
+DROP TABLE Algonex_applications; -- This removes: mana table definition, All rows, Indexes, constraints belonging to the table
 
 -- Drop a database
-DROP DATABASE quickcart_dev; -- it removes the database and its objects
+DROP DATABASE Algonex; -- it removes the database and its objects
 
 -- Safer syntax during setup scripts:
-DROP TABLE IF EXISTS command_demo; -- Ikkada IF EXISTS prevents an error anthee, it does not make the operation safe
+DROP TABLE IF EXISTS Algonex; -- Ikkada IF EXISTS prevents an error anthee, it does not make the operation safe
 
--- DDL transaction warning chudnadii(ou should not expect a later ROLLBACK to restore the previous structure)
+-- DDL transaction warning chudnadii(You should not expect a later ROLLBACK to restore the previous structure)
 START TRANSACTION;
 UPDATE customers
 SET status = 'INACTIVE'
@@ -226,47 +227,24 @@ ROLLBACK;
 This DML changes the rows stored inside tables anthee
 INSERT -> Add rows
 UPDATE - Change existing rows
-DELETE -> Remove rows
+DELETE -> Remove rows with WHERE
 
 -- INSERT: Adds one or more rows into the table
 # Single-row insert
-INSERT INTO Algonex_Crew (
-    Intern_id,
-    full_name,
-    email
-)
-VALUES (
-    1,
-    'nanda Kishore',
-    'nanda@example.com'
-);
+INSERT INTO Algonex_Crew (Intern_id, full_name,email)
+VALUES (1,'nanda Kishore', 'nanda@example.com');
+
+INSERT INTO Algonex_Crew VALUES (1,'nanda Kishore', 'nanda@example.com'); -- Not Preferable
 
 # Multiple-row insert
-INSERT INTO Algonex_Crew (
-    Intern_id,
-    full_name,
-    email
-)
-VALUES
-    (
-        2,
-        'Jaswanth',
-        'Jashu@example.com'
-    ),
-    (
-        3,
-        'Nandini',
-        'Nan@example.com'
-    );
+INSERT INTO Algonex_Crew (Intern_id,full_name, email)
+VALUES(2,'Jaswanth','Jashu@example.com'),
+      (3,'Nandini','Nan@example.com'),
+      (3,'Aneesha','Ani@example.com'); -- Maruvakandii always specify the columns
 
--- Maruvakandii always specify the columns
 # Idi Weak SQL query:
 INSERT INTO Algonex_Crew
-VALUES (
-    4,
-    'Arjun Kumar',
-    'arjun@example.com'
-);
+VALUES (4,'Arjun Kumar','arjun@example.com' );
 
 # Better SQL:
 INSERT INTO customers (
@@ -282,7 +260,7 @@ VALUES (
 
 ##UPDATE: Changes existing rows
 UPDATE Algonex_Crew
-SET full_name = 'Asha R. Rao'
+SET full_name = 'Asha R.Rao'
 WHERE customer_id = 1;
 
 UPDATE Algonex_Crew         - Target table
@@ -291,73 +269,56 @@ WHERE customer_id = 1    - Target rows
 
 -- Update multiple columns
 UPDATE Algonex_Crew
-SET
-    full_name = 'Chithra MJR',
-    email = 'chithra.mjr@example.com'
+SET full_name = 'Chithra MJR', email = 'chithra.mjr@example.com'
 WHERE customer_id = 1;
 
 -- Idi Dangerous update
-UPDATE customers
+UPDATE Algonex_Crew
 SET full_name = 'Unknown'; -- em avuthundoo run cheyandii
 
 -- Algonex Safe update process chudhaama?
 #Step 1: Preview
-SELECT
-    customer_id,
-    full_name,
-    email
-FROM customers
-WHERE customer_id = 1;
+SELECT Register_id, full_name, email FROM Algonex_Crew
+WHERE Register_id = 1;
 
 #Step 2: Begin a transaction
 START TRANSACTION;
 
 #Step 3: Perform the update
-UPDATE customers
-SET full_name = 'Asha R. Rao'
-WHERE customer_id = 1;
+UPDATE Algonex_Crew
+SET full_name = 'Asha R.Rao'
+WHERE Register_id = 1;
 
 Step 4: Verify
-SELECT
-    customer_id,
-    full_name,
-    email
-FROM customers
-WHERE customer_id = 1;
+SELECT Register_id, full_name, email FROM Algonex_Crew
+WHERE Register_id 1;
 
 # Step 5: Accept or cancel
-Correct aythee: COMMIT;
-Incorrect result: ROLLBACK; -- Oka real working developersensitive update ilaane chesthadu
+If Correct aythee: COMMIT;
+Incorrect result: ROLLBACK; -- Oka real working developer sensitive update ilaane chesthadu
 
-##DELETE: Removes rows
-DELETE FROM customers
-WHERE customer_id = 4;
+##DELETE: Removes rows using WHERE Condition
+DELETE FROM Algonex_Crew
+WHERE Register_id = 4;
 
 -- Dangerous deletion
-DELETE FROM customers; -- This targets every row
-Unlike TRUNCATE, it is still a DELETE statement, and on a transactional table such as InnoDB, it can be rolled back if it remains inside an uncommitted transaction.
+DELETE FROM Algonex_Crew; -- This targets every row
+Note: Unlike TRUNCATE, DELETE is still a DELETE statement which can be ROLLBACK on a Transactional Rollback
 
 -- Safe deletion pattern
-SELECT
-    customer_id,
-    full_name,
-    email
-FROM customers
+SELECT customer_id, full_name, email FROM Algonex_Crew
 WHERE customer_id = 4;
+
 START TRANSACTION;
 
 DELETE FROM customers
 WHERE customer_id = 4;
 
-SELECT
-    customer_id,
-    full_name,
-    email
-FROM customers
+SELECT customer_id, full_name, email FROM Algonex_Crew
 WHERE customer_id = 4;
 
 ROLLBACK; -- The row should return after the rollback
 
-
+omniroute github
 
 
