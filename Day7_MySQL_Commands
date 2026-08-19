@@ -121,12 +121,243 @@ MySQL Commands
     └── ANALYZE TABLE
 
 1. DDL — Data Definition Language (DDL changes the structure of the database)
-It operates on objects such as: Databases
-                                Tables
-                                Columns
-                                Indexes
-                                Views
-                                Procedures
-                                Functions
-                                Triggers
+It operates on objects such as: Databases, Tables, Columns,Indexes, Views, Procedures, Functions, Triggers
+CREATE
+ALTER
+RENAME
+TRUNCATE
+DROP
+
+##CREATE: CREATE makes a new database object
+-- Create a database: CREATE DATABASE quickcart_dev;
+                    CREATE DATABASE IF NOT EXISTS quickcart_dev; -- IF NOT EXISTS prevents an error when the database already exists aythee
+-- Create a table
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,
+    full_name VARCHAR(100),
+    email VARCHAR(255)
+);
+
+-- Create an index
+CREATE INDEX idx_customers_email
+ON customers (email);
+
+-- Create a view
+CREATE VIEW active_customers AS
+SELECT
+    customer_id,
+    full_name,
+    email
+FROM customers
+WHERE status = 'ACTIVE';
+
+CREATE DATABASE ->create a container
+CREATE TABLE    -> create a data structure
+CREATE INDEX    - Create an access path
+CREATE VIEW     -> create a stored query definition
+
+##ALTER- ALTER changes an existing object
+-- Typical table changes include: Add a column
+                                Remove a column
+                                Rename a column
+                                Change a column definition
+                                Add a constraint
+                                Remove a constraint
+                                Add an index
+                                Remove an index
+-- Add a column
+ALTER TABLE customers
+ADD COLUMN phone VARCHAR(20);
+
+-- Rename a column
+ALTER TABLE customers
+RENAME COLUMN phone TO mobile_number;
+
+-- Remove a column
+ALTER TABLE customers
+DROP COLUMN mobile_number;
+
+-- Add a constraint
+ALTER TABLE customers
+ADD CONSTRAINT uq_customers_email
+UNIQUE (email);
+
+##RENAME: Renames an object
+RENAME TABLE customers TO application_customers;
+
+-- You can also rename a column through ALTER TABLE:
+ALTER TABLE application_customers
+RENAME COLUMN full_name TO customer_name;
+
+##TRUNCATE: Removes every row from a table while retaining the table definition
+TRUNCATE TABLE customers;
+
+It does not accept a WHERE condition:
+TRUNCATE TABLE customers
+WHERE status = 'INACTIVE'; -- Invalid
+
+-- Use it for situations such as:
+-> Clearing a disposable staging table
+-> Resetting an isolated development table
+-> Removing all temporary imported data
+-> Do not casually use it on a production transactional table
+
+# DROP: Destroys an object
+-- Drop a table
+DROP TABLE customers; -- This removes: mana table definition, All rows, Indexes, constraints belonging to the table
+
+-- Drop a database
+DROP DATABASE quickcart_dev; -- it removes the database and its objects
+
+-- Safer syntax during setup scripts:
+DROP TABLE IF EXISTS command_demo; -- Ikkada IF EXISTS prevents an error anthee, it does not make the operation safe
+
+-- DDL transaction warning chudnadii(ou should not expect a later ROLLBACK to restore the previous structure)
+START TRANSACTION;
+UPDATE customers
+SET status = 'INACTIVE'
+WHERE customer_id = 10;
+
+ALTER TABLE customers
+ADD COLUMN notes VARCHAR(500);
+ROLLBACK;
+
+## DML — Data Manipulation Language
+This DML changes the rows stored inside tables anthee
+INSERT -> Add rows
+UPDATE - Change existing rows
+DELETE -> Remove rows
+
+-- INSERT: Adds one or more rows into the table
+# Single-row insert
+INSERT INTO Algonex_Crew (
+    Intern_id,
+    full_name,
+    email
+)
+VALUES (
+    1,
+    'nanda Kishore',
+    'nanda@example.com'
+);
+
+# Multiple-row insert
+INSERT INTO Algonex_Crew (
+    Intern_id,
+    full_name,
+    email
+)
+VALUES
+    (
+        2,
+        'Jaswanth',
+        'Jashu@example.com'
+    ),
+    (
+        3,
+        'Nandini',
+        'Nan@example.com'
+    );
+
+-- Maruvakandii always specify the columns
+# Idi Weak SQL query:
+INSERT INTO Algonex_Crew
+VALUES (
+    4,
+    'Arjun Kumar',
+    'arjun@example.com'
+);
+
+# Better SQL:
+INSERT INTO customers (
+    customer_id,
+    full_name,
+    email
+)
+VALUES (
+    4,
+    'Arjun Kumar',
+    'arjun@example.com'
+);
+
+##UPDATE: Changes existing rows
+UPDATE Algonex_Crew
+SET full_name = 'Asha R. Rao'
+WHERE customer_id = 1;
+
+UPDATE Algonex_Crew         - Target table
+SET full_name = ...      -> New value
+WHERE customer_id = 1    - Target rows
+
+-- Update multiple columns
+UPDATE Algonex_Crew
+SET
+    full_name = 'Chithra MJR',
+    email = 'chithra.mjr@example.com'
+WHERE customer_id = 1;
+
+-- Idi Dangerous update
+UPDATE customers
+SET full_name = 'Unknown'; -- em avuthundoo run cheyandii
+
+-- Algonex Safe update process chudhaama?
+#Step 1: Preview
+SELECT
+    customer_id,
+    full_name,
+    email
+FROM customers
+WHERE customer_id = 1;
+
+#Step 2: Begin a transaction
+START TRANSACTION;
+
+#Step 3: Perform the update
+UPDATE customers
+SET full_name = 'Asha R. Rao'
+WHERE customer_id = 1;
+
+Step 4: Verify
+SELECT
+    customer_id,
+    full_name,
+    email
+FROM customers
+WHERE customer_id = 1;
+
+# Step 5: Accept or cancel
+Correct aythee: COMMIT;
+Incorrect result: ROLLBACK; -- Oka real working developersensitive update ilaane chesthadu
+
+##DELETE: Removes rows
+DELETE FROM customers
+WHERE customer_id = 4;
+
+-- Dangerous deletion
+DELETE FROM customers; -- This targets every row
+Unlike TRUNCATE, it is still a DELETE statement, and on a transactional table such as InnoDB, it can be rolled back if it remains inside an uncommitted transaction.
+
+-- Safe deletion pattern
+SELECT
+    customer_id,
+    full_name,
+    email
+FROM customers
+WHERE customer_id = 4;
+START TRANSACTION;
+
+DELETE FROM customers
+WHERE customer_id = 4;
+
+SELECT
+    customer_id,
+    full_name,
+    email
+FROM customers
+WHERE customer_id = 4;
+
+ROLLBACK; -- The row should return after the rollback
+
+
+
 
