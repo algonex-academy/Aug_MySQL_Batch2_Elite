@@ -120,7 +120,7 @@ MySQL Commands
     ├── SET
     └── ANALYZE TABLE
 
-1. DDL — Data Definition Language (DDL changes the structure of the database)
+1. DDL — Data Definition Language (DDL changes the structure of the database objects)
 It operates on objects such as: Databases, Tables, Columns,Indexes, Views, Procedures, Functions, Triggers
 CREATE
 ALTER
@@ -132,23 +132,23 @@ DROP
 -- Create a database: CREATE DATABASE quickcart_dev;
                     CREATE DATABASE IF NOT EXISTS quickcart_dev; -- IF NOT EXISTS prevents an error when the DB already exists 
 -- Create a table
-CREATE TABLE customers (
-    customer_id INT PRIMARY KEY,
+CREATE TABLE Algonex_crew (
+    crew_id INT PRIMARY KEY,
     full_name VARCHAR(100),
     email VARCHAR(255)
 );
 
 -- Create an index
 CREATE INDEX idx_customers_email
-ON customers (email);
+ON Algonex_crew (email);
 
 -- Create a view
 CREATE VIEW active_customers AS
 SELECT
-    customer_id,
+    crew_id,
     full_name,
     email
-FROM customers
+FROM Algonex_crew
 WHERE status = 'ACTIVE';
 
 CREATE DATABASE ->create a container
@@ -196,14 +196,14 @@ TRUNCATE TABLE Algonex_applications;
 TRUNCATE TABLE Algonex_applications
 WHERE status = 'INACTIVE'; -- Invalid
 
--- Use it for situations such as:
+Use it for situations such as:
 -> Clearing a disposable staging table
 -> Resetting an isolated development table
 -> Removing all temporary imported data
 -> Do not casually use it on a production transactional table
 => The changes for TRUNCATE is permanent without any ROLLBACK/Backup for the row data
 
-# DROP: Destroys an object from Database
+# DROP: Destroys an object from Database entirely
 -- Drop a table
 DROP TABLE Algonex_applications; -- This removes: mana table definition, All rows, Indexes, constraints belonging to the table
 
@@ -214,14 +214,6 @@ DROP DATABASE Algonex; -- it removes the database and its objects
 DROP TABLE IF EXISTS Algonex; -- Ikkada IF EXISTS prevents an error anthee, it does not make the operation safe
 
 -- DDL transaction warning chudnadii(You should not expect a later ROLLBACK to restore the previous structure)
-START TRANSACTION;
-UPDATE customers
-SET status = 'INACTIVE'
-WHERE customer_id = 10;
-
-ALTER TABLE customers
-ADD COLUMN notes VARCHAR(500);
-ROLLBACK;
 
 ## DML — Data Manipulation Language
 This DML changes the rows stored inside tables anthee
@@ -319,24 +311,11 @@ WHERE customer_id = 4;
 
 ROLLBACK; -- The row should return after the rollback
 
- Property | `DELETE` | `TRUNCATE` | `DROP TABLE`  
- Main purpose | Remove rows | Empty table | Remove table |
- Can use `WHERE` | Yes | No | No |
- Can remove selected rows | Yes | No | No |
- Keeps table definition | Yes | Yes | No |
- Keeps indexes/constraints | Yes | Yes | No |
- Classified as | DML | DDL | DDL |
- Ordinary transaction rollback | Possible for uncommitted transactional DML | No | No |
- Resets `AUTO_INCREMENT` | Not normally | Yes | Object is removed |
- Fires delete triggers | Yes, as applicable | No | Not a row deletion |
-
-##DQL — SELECT and data retrieval
-SELECT just reads the data or inkolaa SELECT as retrieving rows from one or more tables and supports clauses including WHERE, GROUP BY,HAVING, ORDER BYand LIMIT
+##DQL(Data Query Language) — SELECT and data retrieval
+SELECT just reads/retrieves the data/rows or inkolaa SELECT as retrieving rows from one or more tables and supports clauses including WHERE, GROUP BY,HAVING, ORDER BY and LIMIT
 SELECT
-    Crew_id,
-    full_name,
-    email
-FROM Algonex_Crew;
+   C1,C2,C3
+FROM Table_Name;
 
 ##SELECT syntax tree
 SELECT
@@ -347,7 +326,7 @@ SELECT
 ├── JOIN
 │   └── Which related tables?
 ├── WHERE
-│   └── Which individual rows?
+│   └── Which individual rows? using codition
 ├── GROUP BY
 │   └── How should rows be grouped?
 ├── HAVING
@@ -371,9 +350,9 @@ SELECT
     crew_id,
     full_name,
     email FROM Algonex_Crew;
+
 -- Avoid this in production application queries:
-SELECT *
-FROM customers; -- SELECT * can be useful during temporary exploration(Initialga Data chudadaaniki) but meeku production application code should normally request only what it needs
+SELECT * FROM Algonex_Crew; -- SELECT * can be useful during temporary exploration(Initialga Data chudadaaniki) but meeku production application code should normally request only what it needs
 
 -- Filter with WHERE
 SELECT
@@ -381,7 +360,7 @@ SELECT
     full_name,
     email
 FROM Algonex_Crew
-WHERE status = 'ACTIVE';
+WHERE status = 'ACTIVE'; -- Gives 3 columns where status column is having 'ACTIVE' value
 
 -- Multiple conditions:(AND)
 SELECT
@@ -390,7 +369,7 @@ SELECT
     email
 FROM Algonex_Crew
 WHERE status = 'ACTIVE'
-  AND city = 'Hyderabad';
+  AND city = 'Hyderabad'; -- Gives 3 column values where both conditions are satisfied 
 
 -- Alternative condition: (OR)
 SELECT
@@ -405,7 +384,7 @@ SELECT
     crew_id,
     full_name
 FROM Algonex_Crew
-ORDER BY full_name ASC;
+ORDER BY full_name ASC/DESC; -- But Asc is default
 
 -- Multiple sort levels kosam:
 SELECT
@@ -417,14 +396,14 @@ ORDER BY
     status ASC,
     full_name ASC;
 
--- Restrict results with LIMIT
+-- Restrict results with LIMIT and OFFSET
 SELECT
     customer_id,
     full_name,
     created_at
 FROM Algonex_Crew
 ORDER BY created_at DESC
-LIMIT 5; -- Sort newest first and return the first five rows anii 
+LIMIT 5 OFFSET 2; -- Sort newest first and return the next five rows after 2 rows absence 
 -- Without ORDER BY MySQL don't know which five rows should come first
 
 -- Remove duplicate result values with DISTINCT
@@ -433,7 +412,7 @@ SELECT DISTINCT
 FROM Algonex_Crew
 ORDER BY city; -- It does not remove duplicate rows from the table
 
--- Group rows
+-- Group rows using GROUP BY
 SELECT
     status,
     COUNT(*) AS customer_count
