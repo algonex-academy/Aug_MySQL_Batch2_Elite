@@ -319,6 +319,172 @@ WHERE customer_id = 4;
 
 ROLLBACK; -- The row should return after the rollback
 
-omniroute github
+ Property | `DELETE` | `TRUNCATE` | `DROP TABLE`  
+ Main purpose | Remove rows | Empty table | Remove table |
+ Can use `WHERE` | Yes | No | No |
+ Can remove selected rows | Yes | No | No |
+ Keeps table definition | Yes | Yes | No |
+ Keeps indexes/constraints | Yes | Yes | No |
+ Classified as | DML | DDL | DDL |
+ Ordinary transaction rollback | Possible for uncommitted transactional DML | No | No |
+ Resets `AUTO_INCREMENT` | Not normally | Yes | Object is removed |
+ Fires delete triggers | Yes, as applicable | No | Not a row deletion |
 
+##DQL — SELECT and data retrieval
+SELECT just reads the data or inkolaa SELECT as retrieving rows from one or more tables and supports clauses including WHERE, GROUP BY,HAVING, ORDER BYand LIMIT
+SELECT
+    Crew_id,
+    full_name,
+    email
+FROM Algonex_Crew;
+
+##SELECT syntax tree
+SELECT
+├── SELECT list
+│   └── Which columns or expressions?
+├── FROM
+│   └── Which table?
+├── JOIN
+│   └── Which related tables?
+├── WHERE
+│   └── Which individual rows?
+├── GROUP BY
+│   └── How should rows be grouped?
+├── HAVING
+│   └── Which groups should remain?
+├── ORDER BY
+│   └── In what order?
+└── LIMIT
+    └── How many rows?
+
+SELECT
+    column_list
+FROM table_name
+WHERE row_condition
+GROUP BY grouping_columns
+HAVING group_condition
+ORDER BY sorting_columns
+LIMIT row_count; -- Not every query requires every clause gurthupetkondii
+
+-- Select specific columns
+SELECT
+    crew_id,
+    full_name,
+    email FROM Algonex_Crew;
+-- Avoid this in production application queries:
+SELECT *
+FROM customers; -- SELECT * can be useful during temporary exploration(Initialga Data chudadaaniki) but meeku production application code should normally request only what it needs
+
+-- Filter with WHERE
+SELECT
+    crew_id,
+    full_name,
+    email
+FROM Algonex_Crew
+WHERE status = 'ACTIVE';
+
+-- Multiple conditions:(AND)
+SELECT
+    crew_id,
+    full_name,
+    email
+FROM Algonex_Crew
+WHERE status = 'ACTIVE'
+  AND city = 'Hyderabad';
+
+-- Alternative condition: (OR)
+SELECT
+    crew_id,
+    full_name
+FROM Algonex_Crew
+WHERE city = 'Hyderabad'
+   OR city = 'Bengaluru'; 
+
+-- Sort with ORDER BY(Asc/Desc)
+SELECT
+    crew_id,
+    full_name
+FROM Algonex_Crew
+ORDER BY full_name ASC;
+
+-- Multiple sort levels kosam:
+SELECT
+    crew_id,
+    full_name,
+    status
+FROM Algonex_Crew
+ORDER BY
+    status ASC,
+    full_name ASC;
+
+-- Restrict results with LIMIT
+SELECT
+    customer_id,
+    full_name,
+    created_at
+FROM Algonex_Crew
+ORDER BY created_at DESC
+LIMIT 5; -- Sort newest first and return the first five rows anii 
+-- Without ORDER BY MySQL don't know which five rows should come first
+
+-- Remove duplicate result values with DISTINCT
+SELECT DISTINCT
+    city
+FROM Algonex_Crew
+ORDER BY city; -- It does not remove duplicate rows from the table
+
+-- Group rows
+SELECT
+    status,
+    COUNT(*) AS customer_count
+FROM Algonex_Crew
+GROUP BY status;
+
+WHERE versus HAVING
+--> WHERE filters individual rows and Filter rows before grouping
+SELECT
+    status,
+    COUNT(*) AS customer_count
+FROM Algonex_Crew
+WHERE city = 'Hyderabad'
+GROUP BY status;
+
+--> HAVING filters grouped results and  Filter groups after grouping
+SELECT
+    city,
+    COUNT(*) AS customer_count
+FROM Algonex_Crew
+GROUP BY city
+HAVING COUNT(*) >= 10;
+
+-- You write a query like this:                    But ogical model execution flow:
+SELECT                                                 1. FROM / JOIN
+FROM                                                   2. WHERE
+JOIN                                                   3. GROUP BY
+WHERE                                                  4. HAVING
+GROUP BY                                               5. SELECT
+HAVING                                                 6. DISTINCT
+ORDER BY                                               7. ORDER BY
+LIMIT                                                  8. LIMIT
+
+SELECT
+    city,
+    COUNT(*) AS customer_count
+FROM Algonex_Crew
+WHERE status = 'ACTIVE'
+GROUP BY city
+HAVING COUNT(*) >= 10
+ORDER BY customer_count DESC
+LIMIT 5;
+
+Read Algonex_Crew
+-> Keep active customers
+-> Group them by city
+-> Calculate each group’s count
+-> Keep groups with at least ten customers
+-> Sort by count
+-> Return five groups
+
+-- Ikkada MySQL optimizer physically executes every query in that exact sequence. MySQL requires clauses in their defined syntax positions
+for example HAVING follows GROUP BY and precedes ORDER BY
 
