@@ -454,16 +454,52 @@ WHERE status = 'ACTIVE'
 GROUP BY city
 HAVING COUNT(*) >= 10
 ORDER BY customer_count DESC
-LIMIT 5;
+LIMIT 5; -- Keep active customers
+            -> Group them by city
+            -> Calculate each group’s count
+            -> Keep groups with at least ten customers
+            -> Sort by count
+            -> Return five groups
 
-Read Algonex_Crew
--> Keep active customers
--> Group them by city
--> Calculate each group’s count
--> Keep groups with at least ten customers
--> Sort by count
--> Return five groups
-
--- Ikkada MySQL optimizer physically executes every query in that exact sequence. MySQL requires clauses in their defined syntax positions
+-- Ikkada MySQL optimizer physically executes every query in that exact sequence,MySQL requires clauses in their defined syntax positionsloone
 for example HAVING follows GROUP BY and precedes ORDER BY
+
+-- Ee DCL, TCL malli chudhamm
+-- ippudu Utility and diagnostic commands
+-> Eee DESCRIBE, EXPLAIN, HELP, and USE as utility statements, while SHOW statements appear under database administration
+
+╰┈➤ SHOW DATABASES 
+SHOW DATABASES; -- Which databases can this user see?
+
+╰┈➤USE
+USE Algonex; -- Selects the default database for the current session/work kosam
+Verify cheskovali: SELECT DATABASE();
+
+╰┈➤SHOW TABLES
+SHOW TABLES; -- Which tables exist in the selected database?
+
+╰┈➤DESCRIBE(Explain the table structure)
+DESCRIBE Table_name; or DESC Table_name;
+Column names
+Column types
+Nullability
+Keys
+Defaults
+Additional properties
+
+╰┈➤SHOW CREATE TABLE
+SHOW CREATE TABLE Algonex_Crew; -- when you need the precise definition, including constraints, indexes, engine
+
+╰┈➤SHOW INDEX
+SHOW INDEX FROM customers; -- Displays indexes defined on the table
+
+╰┈➤EXPLAIN(Explain the query plan)
+EXPLAIN SELECT
+    Crew_id,
+    full_name
+FROM Algonex_Crew
+WHERE email = 'Sumasree@google.com';-- It is used during query-performance investigation
+
+╰┈➤SHOW WARNINGS
+SHOW WARNINGS; -- Warnings must not be ignored simply endukantee statement did not produce an error
 
