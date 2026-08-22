@@ -1,5 +1,5 @@
-Clauses -> A clause is a part of an SQL statement that performs a specific operation(control/filter/organize) the data you retrieve or modify
-Constraints -> rules that control what data is allowed inside a table
+╰┈➤Clauses -> A clause is a part of an SQL statement that performs a specific operation(control/filter/organize) the data you retrieve or modify
+╰┈➤𝗠𝘆𝗦𝗤𝗟 𝗖𝗼𝗻𝘀𝘁𝗿𝗮𝗶𝗻𝘁𝘀 -> rules that control what data is allowed inside a table
 
 SELECT * FROM employees
 WHERE salary > 50000; -- Ikkada SELECT,FROM, WHERE
@@ -69,3 +69,42 @@ LIMIT 5 OFFSET 10; -- Skip the first 10 rows and return the next 5
 JOIN ... ON | Combine tables           
 WITH        | Create CTEs              
 
+SQL Clause Execution Order(important for interviews Crew Batch)
+SELECT                      But SQL Logical order mathram idi::
+FROM                                  FROM
+WHERE                                WHERE
+GROUP BY                             GROUP BY  
+HAVING                               HAVING      Writing order ≠ logical execution order Gurthupetkondii
+ORDER BY                             SELECT
+LIMIT                                DISTINCT
+                                    ORDER BY
+                                    LIMIT
+
+╰┈➤𝗠𝘆𝗦𝗤𝗟 𝗖𝗼𝗻𝘀𝘁𝗿𝗮𝗶𝗻𝘁𝘀
+A constraint is a rule applied to a table/column to control the data that can be inserted or modified
+                                       Constraint = Data validation rule
+Example: CREATE TABLE students (
+    student_id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    age INT CHECK (age >= 18)
+); -- Ikkada we've created several constraints
+
+╰┈➤𝗧𝘆𝗽𝗲𝘀 𝗼𝗳 𝗠𝘆𝗦𝗤𝗟 𝗖𝗼𝗻𝘀𝘁𝗿𝗮𝗶𝗻𝘁𝘀
+PRIMARY KEY
+FOREIGN KEY
+UNIQUE
+NOT NULL
+CHECK
+DEFAULT
+
+-- PRIMARY KEY: Uniquely identifies every row
+CREATE TABLE students (
+    student_id INT PRIMARY KEY,
+    name VARCHAR(100)
+);
+#Rules:
+Cannot contain NULL
+Must be unique
+A table has one primary key definition
+It can consist of multiple columns -> composite primary key
