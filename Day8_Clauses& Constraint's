@@ -14,20 +14,20 @@ Before running any SQL Query ivi check cheskondii::
 13. Have I previewed the target with SELECT?
 14. Have I captured the exact result or error?
 
-╰┈➤Clauses -> A clause is a part of an SQL statement that performs a specific operation(control/filter/organize) the data you retrieve or modify
+╰┈➤Clauses -> A clause is a part of an SQL query/statement that performs a specific operation(control/filter/organize) on data you retrieve or modify
 ╰┈➤𝗠𝘆𝗦𝗤𝗟 𝗖𝗼𝗻𝘀𝘁𝗿𝗮𝗶𝗻𝘁𝘀 -> rules that control what data is allowed inside a table
 
 SELECT * FROM employees
-WHERE salary > 50000; -- Ikkada SELECT,FROM, WHERE
-
- Clause             Purpose enoo                
-SELECT      | Used to specify which columns/data you want 
+WHERE salary > 50000; -- here SELECT,FROM, WHERE are clauses
+            
+1. SELECT      | Used to specify which columns/data you want 
 SELECT name, salary FROM employees;
 SELECT * FROM employees; -- Ikkada * antee all columns
 
- FROM        | Specifies the table from which you want data       
- WHERE       | Used to filter individual rows  
-SELECT * FROM employees
+ FROM | Specifies from which table you want data    
+
+ WHERE | Used to filter individual one or more rows(Practise 21 Queries) 
+SELECT * FROM Crew
 WHERE salary > 50000; -- Only employees whose salary is greater than 50,000 are returned antheena
 
 SELECT *
@@ -41,16 +41,16 @@ WHERE department = 'IT'
 OR department = 'HR';
 
 DISTINCT    | Removes duplicate values from the result
-SELECT DISTINCT department FROM employees;
+SELECT DISTINCT department FROM Crew;
 
 ORDER BY    | Used to sort results
 SELECT * FROM employees
 ORDER BY salary ASC;
 
-SELECT * FROM employees
+SELECT * FROM Crew
 ORDER BY salary DESC; --  highest salary first vasthundi
 
-GROUP BY    | Used to group rows based on a column
+GROUP BY    | Used to group rows based on a column with aggregate functions(count(), sum()..)
                         employee    department    salary
                         A           IT            50000
                         B           IT            60000
@@ -60,11 +60,11 @@ GROUP BY    | Used to group rows based on a column
 
 SELECT department, COUNT(*)       department    COUNT(*)
 FROM employees                        IT            2
-GROUP BY department;                  HR            2
-                                      Finance       1
+GROUP BY department                   HR            2
+order by COUNT(*);                    Finance       1
 -- GROUP BY is commonly used with aggregate functions: COUNT(), SUM(), AVG(), MIN(), MAX()
 
-HAVING      | Filter groups           
+HAVING      | It Filter grouped rows after GROUP BY        
 SELECT department, COUNT(*) AS employee_count
 FROM employees
 GROUP BY department
@@ -72,29 +72,27 @@ HAVING COUNT(*) > 1;
 -- Group employees by department, then show only departments having more than one employee
 
 LIMIT       | Used to restrict the number of rows returned
-SELECT *
-FROM employees
+SELECT * FROM employees
 ORDER BY salary DESC
 LIMIT 3; -- Returns only 3 rows(top 3 highest-paid employees)
 
 OFFSET      |Used to skip a number of rows
-SELECT *
-FROM employees
+SELECT * FROM employees
 LIMIT 5 OFFSET 10; -- Skip the first 10 rows and return the next 5
 
 JOIN ... ON | Combine tables           
 WITH        | Create CTEs              
 
 SQL Clause Execution Order(important for interviews Crew Batch)
-SELECT                      But SQL Logical order mathram idi::
+SELECT                      But SQL internal Logical execution order mathram idi::
 FROM                                  FROM
 WHERE                                WHERE
 GROUP BY                             GROUP BY  
-HAVING                               HAVING      Writing order ≠ logical execution order Gurthupetkondii
+HAVING                               HAVING      -- Writing order ≠ logical execution order Gurthupetkondii
 ORDER BY                             SELECT
 LIMIT                                DISTINCT
-                                    ORDER BY
-                                    LIMIT
+                                     ORDER BY
+                                     LIMIT
 
 ╰┈➤𝗠𝘆𝗦𝗤𝗟 𝗖𝗼𝗻𝘀𝘁𝗿𝗮𝗶𝗻𝘁𝘀
 A constraint is a rule applied to a table/column to control the data that can be inserted or modified
