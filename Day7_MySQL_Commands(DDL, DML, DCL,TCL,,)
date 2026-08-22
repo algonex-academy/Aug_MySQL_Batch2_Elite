@@ -464,6 +464,39 @@ LIMIT 5; -- Keep active customers
 -- Ikkada MySQL optimizer physically executes every query in that exact sequence,MySQL requires clauses in their defined syntax positionsloone
 for example HAVING follows GROUP BY and precedes ORDER BY
 
+╰┈➤DELETE vs TRUNCATE vs DROP in MySQL
+DELETE   ->Remove rows(DELETE removes rows from an existing table)
+TRUNCATE -> Empty the table(TRUNCATE removes every row from the table very quickly)
+DROP     -> Remove the table itself(DROP removes the entire database object)
+
+DELETE is a DML command that removes selected or all rows and supports WHERE. With InnoDB, an uncommitted delete can be rolled back
+-> TRUNCATE is a DDL command that quickly removes all rows, does not support WHERE, resets the auto-increment counterand causes an implicit commit
+-> DROP is DDL and removes the entire table, including its data, structure, indexesand constraints
+
+Do you need to remove only some rows?
+├── Yes
+│   └── Use DELETE with WHERE
+└── No, remove all rows
+    │
+    ├── Should the table still exist?
+       ├── Yes
+       │   ├── Need transaction rollback or delete triggers?
+       │   │   └── Use DELETE
+       │   │
+       │   └── Disposable data and reset identity?
+       │       └── Use TRUNCATE
+       └── No
+            └── Use DROP
+
+DELETE FROM employees WHERE employee_id = 10;
+-> Remove one employee
+
+TRUNCATE TABLE employees;
+-> Keep the employees table, remove all employees
+
+DROP TABLE employees;
+-> Remove the employees table completely
+
 -- Ee DCL, TCL malli chudhamm
 -- ippudu Utility and diagnostic commands
 -> Eee DESCRIBE, EXPLAIN, HELP, and USE as utility statements, while SHOW statements appear under database administration
