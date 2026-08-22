@@ -1,0 +1,71 @@
+Clauses -> A clause is a part of an SQL statement that performs a specific operation(control/filter/organize) the data you retrieve or modify
+Constraints -> rules that control what data is allowed inside a table
+
+SELECT * FROM employees
+WHERE salary > 50000; -- Ikkada SELECT,FROM, WHERE
+
+ Clause             Purpose enoo                
+SELECT      | Used to specify which columns/data you want 
+SELECT name, salary FROM employees;
+SELECT * FROM employees; -- Ikkada * antee all columns
+
+ FROM        | Specifies the table from which you want data       
+ WHERE       | Used to filter individual rows  
+SELECT * FROM employees
+WHERE salary > 50000; -- Only employees whose salary is greater than 50,000 are returned antheena
+
+SELECT *
+FROM employees
+WHERE salary > 50000
+AND department = 'IT';
+
+SELECT *
+FROM employees
+WHERE department = 'IT'
+OR department = 'HR';
+
+DISTINCT    | Removes duplicate values from the result
+SELECT DISTINCT department FROM employees;
+
+ORDER BY    | Used to sort results
+SELECT * FROM employees
+ORDER BY salary ASC;
+
+SELECT * FROM employees
+ORDER BY salary DESC; --  highest salary first vasthundi
+
+GROUP BY    | Used to group rows based on a column
+                        employee    department    salary
+                        A           IT            50000
+                        B           IT            60000
+                        C           HR            45000
+                        D           HR            55000
+                        E           Finance       70000
+
+SELECT department, COUNT(*)       department    COUNT(*)
+FROM employees                        IT            2
+GROUP BY department;                  HR            2
+                                      Finance       1
+-- GROUP BY is commonly used with aggregate functions: COUNT(), SUM(), AVG(), MIN(), MAX()
+
+HAVING      | Filter groups           
+SELECT department, COUNT(*) AS employee_count
+FROM employees
+GROUP BY department
+HAVING COUNT(*) > 1;
+-- Group employees by department, then show only departments having more than one employee
+
+LIMIT       | Used to restrict the number of rows returned
+SELECT *
+FROM employees
+ORDER BY salary DESC
+LIMIT 3; -- Returns only 3 rows(top 3 highest-paid employees)
+
+OFFSET      |Used to skip a number of rows
+SELECT *
+FROM employees
+LIMIT 5 OFFSET 10; -- Skip the first 10 rows and return the next 5
+
+JOIN ... ON | Combine tables           
+WITH        | Create CTEs              
+
