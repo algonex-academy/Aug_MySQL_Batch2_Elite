@@ -1,3 +1,19 @@
+Before running any SQL Query ivi check cheskondii::
+1. Which server am I connected to?
+2. Which user am I connected as?
+3. Which database is selected?
+4. Is this development, testing, staging, or production?
+5. Does this statement change structure, data, or permissions?
+6. Which exact rows or objects will be affected?
+7. Does the WHERE condition identify the intended rows?
+8. How many affected rows do I expect?
+9. Is autocommit enabled?
+10. Can this operation actually be rolled back?
+11. Does the statement cause an implicit commit?
+12. What happens when the statement runs twice?
+13. Have I previewed the target with SELECT?
+14. Have I captured the exact result or error?
+
 ╰┈➤Clauses -> A clause is a part of an SQL statement that performs a specific operation(control/filter/organize) the data you retrieve or modify
 ╰┈➤𝗠𝘆𝗦𝗤𝗟 𝗖𝗼𝗻𝘀𝘁𝗿𝗮𝗶𝗻𝘁𝘀 -> rules that control what data is allowed inside a table
 
