@@ -137,9 +137,8 @@ B. Classify cheskondi each commandni: (Antee which command we should use anii)
 11. ALTER TABLE
 12. DELETE
 
-C. Inspect your MySQL environment:
-SELECT
-    VERSION() AS mysql_version,
+C. Ikkada inspect your MySQL environment:
+SELECT VERSION() AS mysql_version,
     @@sql_mode AS sql_mode,
     @@autocommit AS autocommit_enabled,
     @@session.time_zone AS session_time_zone,
