@@ -464,20 +464,19 @@ LIMIT 5; -- Keep active customers
 -- Ikkada MySQL optimizer physically executes every query in that exact sequence,MySQL requires clauses in their defined syntax positionsloone
 for example HAVING follows GROUP BY and precedes ORDER BY
 
-╰┈➤DELETE vs TRUNCATE vs DROP in MySQL
-DELETE   ->Remove rows(DELETE removes rows from an existing table)
+╰┈➤Diff btw DELETE vs TRUNCATE vs DROP in MySQL
+DELETE   -> Remove rows(DELETE removes rows from an existing table)
 TRUNCATE -> Empty the table(TRUNCATE removes every row from the table very quickly)
 DROP     -> Remove the table itself(DROP removes the entire database object)
 
-DELETE is a DML command that removes selected or all rows and supports WHERE. With InnoDB, an uncommitted delete can be rolled back
--> TRUNCATE is a DDL command that quickly removes all rows, does not support WHERE, resets the auto-increment counterand causes an implicit commit
--> DROP is DDL and removes the entire table, including its data, structure, indexesand constraints
+DELETE is a DML command that removes selected or all rows and supports WHERE
+With InnoDB, an uncommitted delete can be rolled back
+-> TRUNCATE is a DDL command that quickly removes all rows, does not support WHERE, resets the auto-increment counter and causes an implicit commit
+-> DROP is DDL and removes the entire table structure including its data/rows, structure, indexes and constraints
 
 Do you need to remove only some rows?
-├── Yes
 │   └── Use DELETE with WHERE
 └── No, remove all rows
-    │
     ├── Should the table still exist?
        ├── Yes
        │   ├── Need transaction rollback or delete triggers?
@@ -488,51 +487,46 @@ Do you need to remove only some rows?
        └── No
             └── Use DROP
 
-DELETE FROM employees WHERE employee_id = 10;
--> Remove one employee
+Example: DELETE FROM Google WHERE employee_id = 10; -- Remove one employee
 
-TRUNCATE TABLE employees;
--> Keep the employees table, remove all employees
+Ex: TRUNCATE TABLE Google; -- Keep the Google table structure with column names but remove entire Google Table Data/rows
 
-DROP TABLE employees;
--> Remove the employees table completely
+DROP TABLE Google; -- Remove the Google table completely
 
 -- Ee DCL, TCL malli chudhamm
 -- ippudu Utility and diagnostic commands
 -> Eee DESCRIBE, EXPLAIN, HELP, and USE as utility statements, while SHOW statements appear under database administration
 
 ╰┈➤ SHOW DATABASES 
-SHOW DATABASES; -- Which databases can this user see?
+SHOW DATABASES; -- Gives you all DB's existed in MySQL Server
 
 ╰┈➤USE
-USE Algonex; -- Selects the default database for the current session/work kosam
-Verify cheskovali: SELECT DATABASE();
+USE Algonex; -- Use particular DB to do operations
+Verify cheskovali: SELECT DATABASE(); -- Currently using DB
 
 ╰┈➤SHOW TABLES
 SHOW TABLES; -- Which tables exist in the selected database?
 
-╰┈➤DESCRIBE(Explain the table structure)
-DESCRIBE Table_name; or DESC Table_name;
-Column names
-Column types
-Nullability
-Keys
-Defaults
-Additional properties
+╰┈➤DESCRIBE( which explain the table structure)
+DESCRIBE Table_name;
+DESC Table_name;
+- Column names &Column Dtypes
+- Nullability
+- Keys
+- Defaults
+- Additional properties
 
 ╰┈➤SHOW CREATE TABLE
-SHOW CREATE TABLE Algonex_Crew; -- when you need the precise definition, including constraints, indexes, engine
+SHOW CREATE TABLE Algonex_Crew; -- Gives precise definition, including constraints, indexes
 
 ╰┈➤SHOW INDEX
-SHOW INDEX FROM customers; -- Displays indexes defined on the table
+SHOW INDEX FROM Algonex_Crew; -- Displays indexes defined on the table
 
 ╰┈➤EXPLAIN(Explain the query plan)
 EXPLAIN SELECT
-    Crew_id,
-    full_name
+    Crew_id, full_name
 FROM Algonex_Crew
-WHERE email = 'Sumasree@google.com';-- It is used during query-performance investigation
+WHERE email = 'sumasree@google.com';-- It is used during query-performance investigation
 
 ╰┈➤SHOW WARNINGS
-SHOW WARNINGS; -- Warnings must not be ignored simply endukantee statement did not produce an error
-
+SHOW WARNINGS; -- Warnings must not be ignored simply bcz statement did not produce an error
