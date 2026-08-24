@@ -1,0 +1,178 @@
+Real working-developer command flow - Ikkada a SQL developer beginning work does not immediately execute UPDATE
+
+1. Identify the server and account
+2. Identify the selected database
+3. Inspect available tables
+4. Inspect the target table
+5. Read the target rows
+6. Begin a transaction where appropriate
+7. Modify the rows
+8. Verify the result
+9. Commit or rollback
+10. Investigate performance when necessary ee steps execute chesthadu adee student-Developerki unna diff
+
+
+Step1loo: SELECT
+    VERSION() AS mysql_version,
+    CURRENT_USER() AS connected_user,
+    DATABASE() AS selected_database,
+    @@autocommit AS autocommit_enabled;
+
+SHOW DATABASES;
+USE Algonex;
+SHOW TABLES;
+DESCRIBE Algonex_Crew;
+SHOW CREATE TABLE customers;
+
+SELECT
+    customer_id,
+    full_name,
+    status
+FROM Algonex_Crew
+WHERE customer_id = 10;
+
+START TRANSACTION;
+
+UPDATE Algonex_Crew
+SET status = 'INACTIVE'
+WHERE customer_id = 10;
+
+SELECT
+    customer_id,
+    full_name,
+    status
+FROM Algonex_Crew
+WHERE customer_id = 10; -- Check cheyandii
+
+COMMIT;
+
+ROLLBACK;
+-- Finally, when investigating performance:
+EXPLAIN
+SELECT
+    customer_id,
+    full_name,
+    status
+FROM Algonex_Crew
+WHERE customer_id = 10;
+
+ALGONEX LAB: Hands-on command from 
+-- Step 1: Create and select the database
+CREATE DATABASE IF NOT EXISTS mysql_command_lab;
+USE mysql_command_lab;
+
+Verify: SELECT DATABASE() AS selected_database;
+
+-- Step 2: Create a table
+CREATE TABLE command_demo (
+    record_id INT NOT NULL AUTO_INCREMENT,
+    item_name VARCHAR(100) NOT NULL,
+    item_status VARCHAR(20) NOT NULL,
+
+    PRIMARY KEY (record_id)
+);
+
+Step 3: Inspect the table
+SHOW TABLES;
+DESCRIBE command_demo;
+SHOW CREATE TABLE command_demo;
+
+-- Step 4: Insert rows
+INSERT INTO command_demo (
+    item_name,
+    item_status
+)
+VALUES
+    ('Keyboard', 'ACTIVE'),
+    ('Mouse', 'ACTIVE'),
+    ('Monitor', 'INACTIVE');
+
+-- Step 5: Read rows
+SELECT
+    record_id,
+    item_name,
+    item_status
+FROM command_demo
+ORDER BY record_id;
+
+-- Filter: 
+SELECT
+    record_id,
+    item_name
+FROM command_demo
+WHERE item_status = 'ACTIVE'
+ORDER BY item_name;
+
+-- Step 6: Test rollback
+START TRANSACTION;
+
+UPDATE command_demo
+SET item_status = 'INACTIVE'
+WHERE item_name = 'Mouse';
+
+SELECT
+    record_id,
+    item_name,
+    item_status
+FROM command_demo
+WHERE item_name = 'Mouse';
+
+ROLLBACK;
+
+-- Verify: SELECT
+    record_id,
+    item_name,
+    item_status
+FROM command_demo
+WHERE item_name = 'Mouse'; -- The status should return to ACTIVE
+
+-- Step 7: Test commit
+START TRANSACTION;
+
+UPDATE command_demo
+SET item_status = 'INACTIVE'
+WHERE item_name = 'Mouse';
+
+COMMIT;
+
+-- Verify:
+SELECT
+    record_id,
+    item_name,
+    item_status
+FROM command_demo
+WHERE item_name = 'Mouse'; -- Now it should remain INACTIVE
+
+-- Step 8: Test delete and rollback
+START TRANSACTION;
+
+DELETE FROM command_demo
+WHERE item_name = 'Monitor';
+
+SELECT
+    record_id,
+    item_name,
+    item_status
+FROM command_demo
+ORDER BY record_id;
+
+ROLLBACK; -- Verify that Monitor returned
+
+-- Step 9: Alter the table
+ALTER TABLE command_demo
+ADD COLUMN item_notes VARCHAR(255);
+
+DESCRIBE command_demo;
+
+-- Step 10: Inspect a query plan
+EXPLAIN
+SELECT
+    record_id,
+    item_name
+FROM command_demo
+WHERE item_status = 'ACTIVE';
+
+
+
+
+
