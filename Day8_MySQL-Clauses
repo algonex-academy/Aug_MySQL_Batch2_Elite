@@ -93,32 +93,3 @@ ORDER BY                             SELECT
 LIMIT                                DISTINCT
                                      ORDER BY
                                      LIMIT
-
-╰┈➤𝗠𝘆𝗦𝗤𝗟 𝗖𝗼𝗻𝘀𝘁𝗿𝗮𝗶𝗻𝘁𝘀
-A constraint is a rule applied to a table/column to control the data that can be inserted or modified
-                                       Constraint = Data validation rule
-Example: CREATE TABLE students (
-    student_id INT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE,
-    age INT CHECK (age >= 18)
-); -- Ikkada we've created several constraints
-
-╰┈➤𝗧𝘆𝗽𝗲𝘀 𝗼𝗳 𝗠𝘆𝗦𝗤𝗟 𝗖𝗼𝗻𝘀𝘁𝗿𝗮𝗶𝗻𝘁𝘀
-PRIMARY KEY
-FOREIGN KEY
-UNIQUE
-NOT NULL
-CHECK
-DEFAULT
-
--- PRIMARY KEY: Uniquely identifies every row
-CREATE TABLE students (
-    student_id INT PRIMARY KEY,
-    name VARCHAR(100)
-);
-#Rules:
-Cannot contain NULL
-Must be unique
-A table has one primary key definition
-It can consist of multiple columns -> composite primary key
