@@ -25,6 +25,18 @@ Database Integrity
     ├── CHECK
     └── DEFAULT
 
+One important correction Fresherskosam:
+- Super key
+- Candidate key
+- Alternate key
+- Natural key
+- Surrogate key are mainly database-design terms, You do not write like: CANDIDATE KEY (col_name); -- MySQL does not have that syntax
+
+PRIMARY KEY
+UNIQUE        -- Veetini mathramee use cheyagalam
+NOT NULL
+FOREIGN KEY
+
 Example: CREATE TABLE students (
     student_id INT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
