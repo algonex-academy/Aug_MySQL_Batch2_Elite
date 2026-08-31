@@ -1,0 +1,34 @@
+Mana Goal entantee:: 
+Understand concept
+-> Write SQL
+-> Break SQL deliberately
+-> Read the error
+-> Fix it
+-? Explain why it works
+-> Connect it to a real application
+
+1. MySQL environment
+2. Databases and tables
+3. Data types
+4. DDL
+5. DML
+6. DQL
+7. TCL
+8. Basic utility commands
+9. Operators
+10. Functions
+11. Primary keys
+12. Foreign keys
+13. UNIQUE
+14. NOT NULL
+15. DEFAULT
+16. CHECK
+17. Referential integrity
+18. Filtering
+19. Sorting
+20. Aggregation
+21. GROUP BY
+22. HAVING
+23. Basic joins
+24. Transactions
+25. Constraint-error testing
