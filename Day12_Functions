@@ -1,0 +1,205 @@
+ Function           What it does                           Example                                       
+JSON_OBJECT()   | Creates a JSON object                   JSON_OBJECT('name','John','age',25)       
+ JSON_ARRAY()    | Creates a JSON array                    JSON_ARRAY('Python','SQL','Java')           
+ JSON_EXTRACT()  | Gets data from JSON                     JSON_EXTRACT(data, '$.name')                
+ ->              | Shortcut for JSON extraction            data->'$.name                              
+ ->>             | Extracts JSON value as plain text       data->>'$.name                             
+ JSON_SET()      | Adds/updates a value                    JSON_SET(data, '$.age', 26)                 
+ JSON_REPLACE()  | Updates existing value                  JSON_REPLACE(data, '$.age', 26)             
+ JSON_REMOVE()   | Removes a JSON value                    JSON_REMOVE(data, '$.age')                  
+ JSON_CONTAINS() | Checks whether JSON contains something  JSON_CONTAINS(data, '"Python"', '$.skills') 
+ JSON_VALID()    | Checks whether JSON is valid            JSON_VALID(data)                            
+
+One example to understand the whole concept
+-- Suppose data Stored in a column profile
+{
+  "name": "Paramesh",
+  "age": 23,
+  "skills": ["Python", "SQL"]
+}
+
+-- Get name
+SELECT profile->>'$.name';
+
+-- Get age
+SELECT profile->>'$.age';
+
+-- Get skills
+SELECT profile->'$.skills';
+
+-- Update age
+SELECT JSON_SET(profile, '$.age', 24);
+
+-- Remove age
+SELECT JSON_REMOVE(profile, '$.age');
+
+-- Check whether Python exists
+SELECT JSON_CONTAINS(profile, '"Python"', '$.skills');
+
+
+-- Information functions -> Useful when debugging connections
+SELECT DATABASE(); -- Returns current database.
+SELECT CURRENT_USER(); -- Returns the authenticated MySQL account used for privilege checking
+SELECT CONNECTION_ID(); -- Returns session connection ID
+SELECT VERSION(); -- Returns server version
+
+SELECT
+    VERSION(),
+    CURRENT_USER(),
+    DATABASE(),
+    CONNECTION_ID(); -- Know where you are before changing anything
+
+-- Window functions
+Unlike ordinary aggregate functions: GROUP BY -> collapses several rows into one result row
+-> A window function performs a calculation across a set of related rows without collapsing those rows into a single row
+
+employees
+id  name      department  salary
+1  | Rahul  | IT         | 60000
+2  | Priya  | IT         | 80000
+3  | Arun   | HR         | 50000
+4  | Sneha  | HR         | 70000
+
+SELECT department, AVG(salary)
+FROM employees
+GROUP BY department; -- Result enti??
+
+--  Winmdow functionsthoo
+SELECT
+    name,department, salary,
+    AVG(salary) OVER(PARTITION BY department) AS dept_avg_salary
+FROM employees;
+
+Rahul | IT | 60000 | 70000
+Priya | IT | 80000 | 70000
+Arun  | HR | 50000 | 60000
+Sneha | HR | 70000 | 60000 -- Every employee row remains
+
+GROUP BY = combines rows
+Window Function = keeps rows + calculates across related rows
+
+window_function()
+OVER (
+    [PARTITION BY column]
+    [ORDER BY column]
+    [ROWS/RANGE frame_clause]
+)
+
+SELECT
+    employee_name,
+    department,
+    salary,
+    AVG(salary) OVER(
+        PARTITION BY department
+    ) AS avg_salary
+FROM employees; -- OVER() clause tells Perform this calculation using a window of rows
+
+OVER (
+    PARTITION BY ...
+    ORDER BY ...
+    ROWS ...
+)
+
+A. PARTITION BY: Divides rows into separate groups
+Example:
+PARTITION BY department antee
+IT employees - one window
+HR employees - another window
+Finance employees - another window
+-- It is similar to GROUP BY but doesn't collapse the rows
+
+B. ORDER BY: Controls the order in which rows are evaluated
+ORDER BY salary DESC means highest salary first
+
+C. Frame: Controls exactly which rows around the current row participate
+Example: ROWS BETWEEN 2 PRECEDING AND CURRENT ROW -- means:Current row + previous 2 rows
+This becomes especially useful for running totals, moving averages, and time-series analysis 
+
+-- Main Types of Window Functions 4 categories::
+- Ranking
+- ROW_NUMBER()
+- RANK()
+- DENSE_RANK()
+- NTILE()
+
+-- Aggregate window functions
+SUM()
+AVG()
+COUNT()
+MIN()
+MAX()
+
+-- Value / navigation functions
+LAG()
+LEAD()
+FIRST_VALUE()
+LAST_VALUE()
+
+-- Distribution functions
+PERCENT_RANK()
+CUME_DIST()
+
+ROW_NUMBER() -> RANK() -> DENSE_RANK() -> SUM() -> AVG() -> LAG() -> LEAD()
+
+
+1. ROW_NUMBER() :Assigns a unique sequential number to every row
+ROW_NUMBER() OVER (
+    [PARTITION BY column]
+    ORDER BY column
+)
+
+SELECT
+    employee_name,
+    department,
+    salary,
+    ROW_NUMBER() OVER(
+        ORDER BY salary DESC
+    ) AS row_num
+FROM employees;
+
+Priya | IT | 80000 | 1
+Sneha | HR | 70000 | 2
+Rahul | IT | 60000 | 3
+Arun  | HR | 50000 | 4 -- Every row receives a unique number
+
+-- when We want the latest order of every customer
+SELECT *
+FROM (
+    SELECT
+        order_id,
+        customer_id,
+        order_date,
+        amount,
+        ROW_NUMBER() OVER(
+            PARTITION BY customer_id
+            ORDER BY order_date DESC
+        ) AS rn
+    FROM orders
+) t
+WHERE rn = 1;
+
+2. RANK(): Assigns the same rank to tied values
+But it skips numbers after a tie
+
+SELECT
+    employee_name,
+    salary,
+    RANK() OVER(
+        ORDER BY salary DESC
+    ) AS salary_rank
+FROM employees;
+
+Suppose salariez are: 90000
+                      80000
+                      80000
+                      70000
+90000 -> 1
+80000 -> 2
+80000 - 2 --  Rank3 skipped
+70000 -> 4
+
+
+DENSE_RANK(): Similar to RANK(), but does not skip numbers
+
+
+
