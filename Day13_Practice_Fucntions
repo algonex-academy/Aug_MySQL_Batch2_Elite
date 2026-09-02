@@ -1,0 +1,102 @@
+Algonex Industry Scenario: Imagine you work as a Junior Data Analyst / SQL Developer for an e-commerce company
+
+The business wants to analyze:
+- customer purchases
+product sales
+- employee/salesperson performance
+daily revenue
+- customer spending
+rankings
+- growth
+repeat purchases
+- top products
+moving averages
+- percentile/segment analysis -> We will build one table and solve all of these with MySQL window functions
+
+  -- Create the Database
+CREATE DATABASE ecommerce_analytics;
+USE ecommerce_analytics;
+
+--3. Create the Main Table
+We'll create an orders table
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY, -- Unique order
+    order_date DATE NOT NULL, -- Date of purchase
+    customer_id INT NOT NULL, -- Customer identifier
+    customer_name VARCHAR(100) NOT NULL, -- Customer name
+    city VARCHAR(50),                    -- Customer city
+    product_name VARCHAR(100),           -- Product purchased
+    category VARCHAR(50),                -- Product category
+    quantity INT UNSIGNED NOT NULL,      -- Number of units
+    unit_price DECIMAL(10,2) NOT NULL,  -- Price per unit
+    sales_rep VARCHAR(100),              -- Employee handling sale
+    payment_method VARCHAR(30)         -- Payment type
+);
+
+-- 4. Insert Realistic Data: We'll intentionally create enough repeated customers, products, dates and categories to make window functions meaningful
+  INSERT INTO orders
+(order_id, order_date, customer_id, customer_name, city,
+ product_name, category, quantity, unit_price,
+ sales_rep, payment_method)
+VALUES
+
+(101, '2026-01-01', 1, 'Rahul', 'Bangalore',
+ 'Laptop', 'Electronics', 1, 70000, 'Amit', 'UPI'),
+
+(102, '2026-01-02', 2, 'Priya', 'Hyderabad',
+ 'Mobile', 'Electronics', 2, 25000, 'Neha', 'Card'),
+
+(103, '2026-01-03', 1, 'Rahul', 'Bangalore',
+ 'Headphones', 'Accessories', 2, 3000, 'Amit', 'UPI'),
+
+(104, '2026-01-04', 3, 'Arun', 'Chennai',
+ 'Laptop', 'Electronics', 1, 65000, 'Ravi', 'Card'),
+
+(105, '2026-01-05', 4, 'Sneha', 'Pune',
+ 'Keyboard', 'Accessories', 3, 2000, 'Neha', 'Cash'),
+
+(106, '2026-01-06', 2, 'Priya', 'Hyderabad',
+ 'Tablet', 'Electronics', 1, 30000, 'Neha', 'UPI'),
+
+(107, '2026-01-07', 5, 'Kiran', 'Delhi',
+ 'Mobile', 'Electronics', 1, 28000, 'Ravi', 'Card'),
+
+(108, '2026-01-08', 1, 'Rahul', 'Bangalore',
+ 'Monitor', 'Electronics', 2, 15000, 'Amit', 'Card'),
+
+(109, '2026-01-09', 3, 'Arun', 'Chennai',
+ 'Mouse', 'Accessories', 2, 1500, 'Ravi', 'UPI'),
+
+(110, '2026-01-10', 4, 'Sneha', 'Pune',
+ 'Laptop', 'Electronics', 1, 75000, 'Neha', 'Card'),
+
+(111, '2026-01-11', 6, 'Meena', 'Mumbai',
+ 'Mobile', 'Electronics', 3, 22000, 'Amit', 'UPI'),
+
+(112, '2026-01-12', 2, 'Priya', 'Hyderabad',
+ 'Headphones', 'Accessories', 1, 4000, 'Neha', 'UPI'),
+
+(113, '2026-01-13', 5, 'Kiran', 'Delhi',
+ 'Laptop', 'Electronics', 1, 72000, 'Ravi', 'Card'),
+
+(114, '2026-01-14', 1, 'Rahul', 'Bangalore',
+ 'Keyboard', 'Accessories', 2, 2500, 'Amit', 'UPI'),
+
+(115, '2026-01-15', 3, 'Arun', 'Chennai',
+ 'Mobile', 'Electronics', 2, 27000, 'Ravi', 'Card'),
+
+(116, '2026-01-16', 6, 'Meena', 'Mumbai',
+ 'Tablet', 'Electronics', 1, 32000, 'Amit', 'UPI'),
+
+(117, '2026-01-17', 4, 'Sneha', 'Pune',
+ 'Monitor', 'Electronics', 1, 18000, 'Neha', 'Card'),
+
+(118, '2026-01-18', 2, 'Priya', 'Hyderabad',
+ 'Mouse', 'Accessories', 3, 1200, 'Neha', 'Cash'),
+
+(119, '2026-01-19', 5, 'Kiran', 'Delhi',
+ 'Headphones', 'Accessories', 2, 3500, 'Ravi', 'UPI'),
+
+(120, '2026-01-20', 1, 'Rahul', 'Bangalore',
+ 'Mobile', 'Electronics', 1, 26000, 'Amit', 'Card');
+
