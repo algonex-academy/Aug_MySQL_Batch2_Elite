@@ -200,6 +200,831 @@ Suppose salariez are: 90000
 
 
 DENSE_RANK(): Similar to RANK(), but does not skip numbers
+-- Take Same salaries: 90000
+                       80000
+                       80000
+                       70000
+Result:
+90000 -> 1
+80000 -> 2
+80000 -> 2
+70000 -> 3
+
+RANK()       -> 1, 2, 2, 4(Skip)
+DENSE_RANK() -> 1, 2, 2, 3 (No Skip)
 
 
+Algonex_Lab: ROW_NUMBER() vs RANK() vs DENSE_RANK() - Interviews FAV
+Salary
+100000
+90000
+90000
+80000
+
+ Salary    ROW_NUMBER  RANK  DENSE_RANK 
+ 100000 |          1 |    1 |          1 
+  90000 |          2 |    2 |          2        ROW_NUMBER -> always unique
+  90000 |          3 |    2 |          2        RANK -> ties + gaps
+  80000 |          4 |    4 |          3        DENSE_RANK -> ties + no gaps
+
+Deloite Que: Top 3 Employees per Department
+SELECT * FROM (
+    SELECT
+        employee_name,
+        department,
+        salary,
+        DENSE_RANK() OVER(
+            PARTITION BY department                  IT -> top 3 salaries
+            ORDER BY salary DESC                     HR -> top 3 salaries
+        ) AS salary_rank                             Finance -> top 3 salaries
+    FROM employees
+) t
+WHERE salary_rank <= 3;
+
+-- 4. SUM() as a Window Function
+You can use aggregate functions as window functions
+
+-- Syntax: SUM(column) OVER (
+    [PARTITION BY column]
+    [ORDER BY column]
+)
+
+SELECT
+    order_date,                       Order_date         Amount
+    amount,                          2026-08-01           100
+    SUM(amount) OVER(                2026-08-02           200
+        ORDER BY order_date          2026-08-03           150
+    ) AS running_total               2026-08-04           300
+FROM orders;
+
+Order_date         Amount   Running Total
+      08-01        100      100
+      08-02        200      300
+      08-03        150      450
+      08-04        300      750  -- running total or cumulative sum
+
+-- Industry Example Chudhama: Running Sales Total
+SELECT
+    order_date,
+    sales,
+    SUM(sales) OVER(
+        ORDER BY order_date
+    ) AS cumulative_sales
+FROM daily_sales;
+-- Aaacenture Business teams use this for:
+- revenue growth
+- monthly targets
+- cumulative sales
+- inventory movement
+- financial reporting
+
+It is an attribute of a numeric data type:
+
+INT UNSIGNED
+BIGINT UNSIGNED
+SMALLINT UNSIGNED
+DECIMAL UNSIGNED
+
+If you have limited time, prioritize:
+
+1. JSON_EXTRACT()
+2. -> and ->>
+3. JSON_OBJECT()
+4. JSON_ARRAY()
+5. JSON_SET()
+6. JSON_REMOVE()
+7. JSON_CONTAINS()
+8. JSON_VALID()
+
+One example to understand the whole concept
+
+Suppose:
+
+{
+  "name": "Rahul",
+  "age": 23,
+  "skills": ["Python", "SQL"]
+}
+
+Stored in a column called profile.
+
+-- Get name
+SELECT profile->>'$.name';
+
+-- Get age
+SELECT profile->>'$.age';
+
+-- Get skills
+SELECT profile->'$.skills';
+
+-- Update age
+SELECT JSON_SET(profile, '$.age', 24);
+
+-- Remove age
+SELECT JSON_REMOVE(profile, '$.age');
+
+-- Check whether Python exists
+SELECT JSON_CONTAINS(profile, '"Python"', '$.skills');
+
+For a fresher, this level is more than enough initially. Focus especially on understanding JSON paths like $.name, $.age, and $.skills[0]—they are the key to using MySQL JSON functions effectively.
+
+Exaplain window fucntions with realtime industry examples, descrition indetail, clear along with standard syntax
+
+Absolutely. In MySQL, Window Functions are one of the most important SQL topics for interviews and real-world analytics.
+
+MySQL Window Functions
+1. What is a Window Function?
+
+A window function performs a calculation across a set of related rows without collapsing those rows into a single row.
+
+That last part is the key difference.
+
+Normal aggregate function
+
+Suppose we have:
+
+employees
+------------------------------------------------
+id | name   | department | salary
+------------------------------------------------
+1  | Rahul  | IT         | 60000
+2  | Priya  | IT         | 80000
+3  | Arun   | HR         | 50000
+4  | Sneha  | HR         | 70000
+
+Using GROUP BY:
+
+SELECT department, AVG(salary)
+FROM employees
+GROUP BY department;
+
+Result:
+
+IT   | 70000
+HR   | 60000
+
+The individual employee rows are gone.
+
+Window function
+SELECT
+    name,
+    department,
+    salary,
+    AVG(salary) OVER(PARTITION BY department) AS dept_avg_salary
+FROM employees;
+
+Result:
+
+Rahul | IT | 60000 | 70000
+Priya | IT | 80000 | 70000
+Arun  | HR | 50000 | 60000
+Sneha | HR | 70000 | 60000
+
+Every employee row remains.
+
+Remember
+
+GROUP BY = combines rows
+
+Window Function = keeps rows + calculates across related rows
+
+2. Standard Syntax
+
+The basic syntax is:
+
+window_function()
+OVER (
+    [PARTITION BY column]
+    [ORDER BY column]
+    [ROWS/RANGE frame_clause]
+)
+
+Example:
+
+SELECT
+    employee_name,
+    department,
+    salary,
+    AVG(salary) OVER(
+        PARTITION BY department
+    ) AS avg_salary
+FROM employees;
+
+The OVER() clause tells MySQL:
+
+"Perform this calculation using a window of rows."
+
+3. Three Important Parts of OVER()
+
+Think of it as:
+
+OVER (
+    PARTITION BY ...
+    ORDER BY ...
+    ROWS ...
+)
+A. PARTITION BY
+
+Divides rows into separate groups.
+
+Example:
+
+PARTITION BY department
+
+means:
+
+IT employees → one window
+HR employees → another window
+Finance employees → another window
+
+It is similar to GROUP BY, but doesn't collapse the rows.
+
+B. ORDER BY
+
+Controls the order in which rows are evaluated.
+
+ORDER BY salary DESC
+
+means highest salary first.
+
+C. Frame
+
+Controls exactly which rows around the current row participate.
+
+Example:
+
+ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+
+means:
+
+Current row + previous 2 rows.
+
+This becomes especially useful for running totals, moving averages, and time-series analysis.
+
+4. Main Types of Window Functions
+
+For a fresher, organize them into four categories:
+
+Ranking
+ROW_NUMBER()
+RANK()
+DENSE_RANK()
+NTILE()
+Aggregate window functions
+SUM()
+AVG()
+COUNT()
+MIN()
+MAX()
+Value / navigation functions
+LAG()
+LEAD()
+FIRST_VALUE()
+LAST_VALUE()
+Distribution functions
+PERCENT_RANK()
+CUME_DIST()
+
+For interviews, the most important are:
+
+ROW_NUMBER() → RANK() → DENSE_RANK() → SUM() → AVG() → LAG() → LEAD()
+
+5. ROW_NUMBER()
+
+Assigns a unique sequential number to every row.
+
+Syntax
+ROW_NUMBER() OVER (
+    [PARTITION BY column]
+    ORDER BY column
+)
+Example
+SELECT
+    employee_name,
+    department,
+    salary,
+    ROW_NUMBER() OVER(
+        ORDER BY salary DESC
+    ) AS row_num
+FROM employees;
+
+Result:
+
+Priya | IT | 80000 | 1
+Sneha | HR | 70000 | 2
+Rahul | IT | 60000 | 3
+Arun  | HR | 50000 | 4
+
+Every row receives a unique number.
+
+Real industry example: latest order per customer
+
+Suppose:
+
+orders
+--------------------------------------------------
+order_id | customer_id | order_date | amount
+--------------------------------------------------
+101      | 1           | 2026-08-01 | 500
+102      | 1           | 2026-08-15 | 700
+103      | 2           | 2026-08-10 | 300
+104      | 1           | 2026-08-20 | 900
+
+We want the latest order of every customer.
+
+SELECT *
+FROM (
+    SELECT
+        order_id,
+        customer_id,
+        order_date,
+        amount,
+        ROW_NUMBER() OVER(
+            PARTITION BY customer_id
+            ORDER BY order_date DESC
+        ) AS rn
+    FROM orders
+) t
+WHERE rn = 1;
+
+Result:
+
+104 | 1 | 2026-08-20 | 900
+103 | 2 | 2026-08-10 | 300
+
+This is a very common industry pattern.
+
+6. RANK()
+
+Assigns the same rank to tied values.
+
+But it skips numbers after a tie.
+
+Example
+SELECT
+    employee_name,
+    salary,
+    RANK() OVER(
+        ORDER BY salary DESC
+    ) AS salary_rank
+FROM employees;
+
+Suppose salaries are:
+
+90000
+80000
+80000
+70000
+
+Result:
+
+90000 → 1
+80000 → 2
+80000 → 2
+70000 → 4
+
+Notice:
+
+1, 2, 2, 4
+
+Rank 3 is skipped.
+
+7. DENSE_RANK()
+
+Similar to RANK(), but does not skip numbers.
+
+Same salaries:
+
+90000
+80000
+80000
+70000
+
+Result:
+
+90000 → 1
+80000 → 2
+80000 → 2
+70000 → 3
+
+So:
+
+RANK()       → 1, 2, 2, 4
+DENSE_RANK() → 1, 2, 2, 3
+8. ROW_NUMBER() vs RANK() vs DENSE_RANK()
+
+This is one of the most common interview questions.
+
+Suppose:
+
+Salary
+------
+100000
+90000
+90000
+80000
+Salary	ROW_NUMBER	RANK	DENSE_RANK
+100000	1	1	1
+90000	2	2	2
+90000	3	2	2
+80000	4	4	3
+Easy memory trick
+
+ROW_NUMBER → always unique
+
+RANK → ties + gaps
+
+DENSE_RANK → ties + no gaps
+
+9. Real Industry Example: Top 3 Employees per Department
+
+This is extremely important.
+
+SELECT *
+FROM (
+    SELECT
+        employee_name,
+        department,
+        salary,
+        DENSE_RANK() OVER(
+            PARTITION BY department
+            ORDER BY salary DESC
+        ) AS salary_rank
+    FROM employees
+) t
+WHERE salary_rank <= 3;
+
+Meaning:
+
+IT → top 3 salaries
+HR → top 3 salaries
+Finance → top 3 salaries
+
+This pattern appears frequently in:
+
+employee analytics
+sales rankings
+product rankings
+customer spending
+regional performance
+10. SUM() as a Window Function
+
+You can use aggregate functions as window functions.
+
+Syntax
+SUM(column) OVER (
+    [PARTITION BY column]
+    [ORDER BY column]
+)
+
+Example:
+
+SELECT
+    order_date,
+    amount,
+    SUM(amount) OVER(
+        ORDER BY order_date
+    ) AS running_total
+FROM orders;
+
+Suppose:
+
+Date         Amount
+2026-08-01   100
+2026-08-02   200
+2026-08-03   150
+2026-08-04   300
+
+Result:
+
+Date         Amount   Running Total
+------------------------------------
+08-01        100      100
+08-02        200      300
+08-03        150      450
+08-04        300      750
+
+This is called a running total or cumulative sum.
+
+11. Industry Example: Running Sales Total
+
+For an e-commerce company:
+
+SELECT
+    order_date,
+    sales,
+    SUM(sales) OVER(
+        ORDER BY order_date
+    ) AS cumulative_sales
+FROM daily_sales;
+
+Business teams use this for: revenue growth
+                             monthly targets
+                             cumulative sales
+                             inventory movement
+                             financial reporting
+
+12. Running Total by Department
+Suppose employees receive bonuses:
+SELECT
+    department,
+    employee_name,
+    bonus,
+    SUM(bonus) OVER(
+        PARTITION BY department
+        ORDER BY bonus DESC
+    ) AS cumulative_bonus
+FROM employees; -- Each department gets its own running total
+
+-- AVG() as a Window Function
+SELECT
+    employee_name,
+    department,
+    salary,
+    AVG(salary) OVER(
+        PARTITION BY department
+    ) AS department_avg
+FROM employees; -- Now every employee can be compared with their department average
+
+-> Real Industry Example chudandi: Employee Salary Comparison
+SELECT
+    employee_name, department, salary,
+    AVG(salary) OVER(
+        PARTITION BY department) AS avg_salary,
+    salary - AVG(salary) OVER(
+        PARTITION BY department) AS difference_from_avg
+FROM employees;
+
+Rahul | IT | 60000 | 70000 | -10000
+Priya | IT | 80000 | 70000 |  10000
+
+-- Mana HRs helps identify:
+employees below average
+compensation gaps
+high performers
+salary benchmarking
+
+-- COUNT() as a Window Function
+SELECT
+    employee_name, department,
+    COUNT(*) OVER(
+        PARTITION BY department
+    ) AS department_employee_count
+FROM employees;
+
+Anitha | IT | 2
+Bhavani | IT | 2
+NAnada  | HR | 2
+Kaveri | HR | 2
+
+-- LAG(): LAG() gives you a value from a previous row
+
+Syntaax:LAG(column, offset, default_value)
+OVER (
+    [PARTITION BY column]
+    ORDER BY column
+)
+
+--Ikada LAG(column) OVER(...) means give me the value from the previous row
+
+Example-Daily sales:
+Date       Sales
+08-01      100
+08-02      150
+08-03      120
+08-04      180
+
+SELECT
+    order_date, sales,
+    LAG(sales) OVER(
+        ORDER BY order_date
+    ) AS previous_day_sales
+FROM daily_sales;
+
+08-01 | 100 | NULL
+08-02 | 150 | 100
+08-03 | 120 | 150
+08-04 | 180 | 120
+
+-- Industry Example: Day-over-Day Sales Growth
+SELECT
+    order_date, sales,
+    LAG(sales) OVER(
+        ORDER BY order_date
+    ) AS previous_sales
+FROM daily_sales;
+
+SELECT
+    order_date, sales, previous_sales,sales - previous_sales AS sales_change
+FROM (
+    SELECT
+        order_date,
+        sales,
+        LAG(sales) OVER(
+            ORDER BY order_date
+        ) AS previous_sales
+    FROM daily_sales
+) t;
+
+-- You can calculate percentage growth too:
+
+SELECT
+    order_date,
+    sales,
+    LAG(sales) OVER(
+        ORDER BY order_date
+    ) AS previous_sales,
+    ROUND(
+        (sales - LAG(sales) OVER(ORDER BY order_date))
+        / LAG(sales) OVER(ORDER BY order_date) * 100,
+        2
+    ) AS growth_percentage
+FROM daily_sales;
+
+-- LEAD()
+LEAD() is the opposite of LAG()
+
+LAG(): Look backward
+LEAD(): Look forward
+
+Syntax: LEAD(column, offset, default_value)
+OVER (
+    [PARTITION BY column]
+    ORDER BY column
+)
+
+SELECT
+    order_date,
+    sales,
+    LEAD(sales) OVER(
+        ORDER BY order_date
+    ) AS next_day_sales
+FROM daily_sales; 
+
+08-01 | 100 | 150
+08-02 | 150 | 120
+08-03 | 120 | 180
+08-04 | 180 | NULL
+
+Industry Example cheyu: Customer Purchase Analysis
+customer_id | order_date
+1           | 2026-01-01
+1           | 2026-02-10
+1           | 2026-03-15
+2           | 2026-01-05
+2           | 2026-03-20
+
+-- Use LEAD():
+SELECT
+    customer_id,
+    order_date,
+    LEAD(order_date) OVER(
+        PARTITION BY customer_id
+        ORDER BY order_date
+    ) AS next_order_date
+FROM orders; -- How many days until the customer's next purchase?
+
+-- FIRST_VALUE() - Returns the first value in the window
+Syntax: FIRST_VALUE(column)
+OVER (
+    [PARTITION BY column]
+    ORDER BY column
+)
+
+SELECT
+    employee_name, department, salary,
+    FIRST_VALUE(salary) OVER(
+        PARTITION BY department
+        ORDER BY salary DESC
+    ) AS highest_salary
+FROM employees; -- Every employee in the department can see the highest salary
+
+-- LAST_VALUE() - Returns the last value according to the window frame
+Syntax: LAST_VALUE(column)
+OVER (
+    PARTITION BY column
+    ORDER BY column
+) -- LAST_VALUE() is often misunderstood because of the default window frame so manam followig method vadthaam:
+
+ROWS BETWEEN UNBOUNDED PRECEDING
+AND UNBOUNDED FOLLOWING
+
+Example: SELECT employee_name, department, salary,
+    LAST_VALUE(salary) OVER(
+        PARTITION BY department
+        ORDER BY salary
+        ROWS BETWEEN UNBOUNDED PRECEDING
+        AND UNBOUNDED FOLLOWING
+    ) AS lowest_salary
+FROM employees;
+
+╰┈➤ Window Frames (idi advanced but important concept)
+Example: ROWS BETWEEN 2 PRECEDING AND CURRENT ROW  ( Previous 2 rows + Current row)
+
+-- Common frame expressions
+ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW -- Running calculation from the beginning
+
+ROWS BETWEEN 2 PRECEDING AND CURRENT ROW -- Current + previous 2 rows
+
+ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING -- Entire partition
+
+-- Real Industry Example: 7-Day Moving Average
+Suppose you have daily sales but You want a 7-day moving average
+SELECT order_date, sales,
+    AVG(sales) OVER(
+        ORDER BY order_date
+        ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+    ) AS seven_day_avg
+FROM daily_sales;
+
+-- Ikkada 6 PRECEDING antee? (6 previous days + current day = 7 rows)
+
+╰┈➤ NTILE(): Divides rows into approximately equal groups
+Syntax: NTILE(number)
+OVER (
+    [PARTITION BY column]
+    ORDER BY column
+)
+
+SELECT
+    employee_name,
+    salary,
+    NTILE(4) OVER(
+        ORDER BY salary DESC
+    ) AS salary_quartile
+FROM employees;
+
+Employees are divided into 4 groups:
+1 -> Top 25%                                   useful in:
+2 -> Next 25%                                  customer segmentation
+3 -> Next 25%                                  salary analysis, performance analysis
+4 -> Bottom 25%                                marketing segmentation
+
+╰┈➤PERCENT_RANK(): Calculates the relative rank of a row between 0 and 1
+Syntax:
+PERCENT_RANK() OVER (
+    ORDER BY column
+)
+
+-- Mundhu iovi raavali ok: ROW_NUMBER, RANK, DENSE_RANK, SUM, AVG, LAG, LEAD
+
+GROUP BY ->reduces rows
+WINDOW FUNCTION -preserves rows
+
+╰┈➤Solve and get OFFER
+Top N per Group: Find the top 2 highest-paid employees in each department
+
+SELECT * FROM (
+    SELECT employee_name, department, salary,
+        ROW_NUMBER() OVER(
+            PARTITION BY department
+            ORDER BY salary DESC
+        ) AS rn
+    FROM employees
+) t
+WHERE rn <= 2;
+
+-- Ikada Why do we need a subquery?
+Because you generally cannot directly filter a window-function result in the same WHERE clause where it is calculated
+
+The pattern is:
+Step 1 -> calculate window function
+Step 2 -> put it in subquery/CTE
+Step 3 -> filter the result
+
+╰┈➤ Another Important Pattern: Find Duplicate Records 
+SELECT * FROM (
+    SELECT
+        id, email,
+        ROW_NUMBER() OVER(
+            PARTITION BY email
+            ORDER BY id) AS rn
+    FROM customers
+) t
+WHERE rn > 1; -- This identifies duplicate records while preserving the original rows(Common in data celaning/ETL)
+
+
+Saree finalga meeru window-function question chusthee ila alochichandi:
+1. What is my group? -> PARTITION BY
+2. What order should rows follow? ->   ORDER BY
+3. What calculation do I need? ->   ROW_NUMBER / RANK / SUM / AVG / LAG / LEAD
+4. Do I need a specific frame? ->   ROWS BETWEEN ...
+
+Oka example kudaa chudham: "Give me each employee's rank within their department"
+Group = department
+        |
+PARTITION BY department
+
+Order = salary highest to lowest
+        |
+ORDER BY salary DESC
+
+Calculation = rank
+        |
+    RANK()
+
+RANK() OVER(
+    PARTITION BY department
+    ORDER BY salary DESC
+)
 
