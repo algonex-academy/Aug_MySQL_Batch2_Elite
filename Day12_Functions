@@ -11,7 +11,7 @@ JSON_OBJECT()   | Creates a JSON object                   JSON_OBJECT('name','Jo
  JSON_VALID()    | Checks whether JSON is valid            JSON_VALID(data)                            
 
 One example to understand the whole concept
--- Suppose data Stored in a column profile
+-- Suppose data Stored in a column "profile"
 {
   "name": "Paramesh",
   "age": 23,
@@ -38,7 +38,7 @@ SELECT JSON_CONTAINS(profile, '"Python"', '$.skills');
 
 
 -- Information functions -> Useful when debugging connections
-SELECT DATABASE(); -- Returns current database.
+SELECT DATABASE(); -- Returns current database
 SELECT CURRENT_USER(); -- Returns the authenticated MySQL account used for privilege checking
 SELECT CONNECTION_ID(); -- Returns session connection ID
 SELECT VERSION(); -- Returns server version
@@ -49,6 +49,10 @@ SELECT
     DATABASE(),
     CONNECTION_ID(); -- Know where you are before changing anything
 
+show databases();
+desc Tabel_name;
+explain table_name;
+
 -- Window functions
 Unlike ordinary aggregate functions: GROUP BY -> collapses several rows into one result row
 -> A window function performs a calculation across a set of related rows without collapsing those rows into a single row
@@ -56,15 +60,15 @@ Unlike ordinary aggregate functions: GROUP BY -> collapses several rows into one
 employees
 id  name      department  salary
 1  | Rahul  | IT         | 60000
-2  | Priya  | IT         | 80000
 3  | Arun   | HR         | 50000
 4  | Sneha  | HR         | 70000
+2  | Priya  | IT         | 80000
 
 SELECT department, AVG(salary)
 FROM employees
 GROUP BY department; -- Result enti??
 
---  Winmdow functionsthoo
+-- with Window functionsthoo
 SELECT
     name,department, salary,
     AVG(salary) OVER(PARTITION BY department) AS dept_avg_salary
@@ -78,6 +82,7 @@ Sneha | HR | 70000 | 60000 -- Every employee row remains
 GROUP BY = combines rows
 Window Function = keeps rows + calculates across related rows
 
+-- Standard syntax for window functions
 window_function()
 OVER (
     [PARTITION BY column]
@@ -92,7 +97,7 @@ SELECT
     AVG(salary) OVER(
         PARTITION BY department
     ) AS avg_salary
-FROM employees; -- OVER() clause tells Perform this calculation using a window of rows
+FROM employees; -- OVER() clause tells Perform this AVG(salary) calculation using a window of rows
 
 OVER (
     PARTITION BY ...
@@ -100,40 +105,39 @@ OVER (
     ROWS ...
 )
 
-A. PARTITION BY: Divides rows into separate groups
-Example:
-PARTITION BY department antee
+A. PARTITION BY: Divides multiple rows into separate groups
+Example: PARTITION BY department
 IT employees - one window
 HR employees - another window
 Finance employees - another window
 -- It is similar to GROUP BY but doesn't collapse the rows
 
-B. ORDER BY: Controls the order in which rows are evaluated
-ORDER BY salary DESC means highest salary first
+B. ORDER BY: Controls the order in which rows are evaluated(Asc/Desc)
+Ex: ORDER BY salary DESC -- highest salary first
 
 C. Frame: Controls exactly which rows around the current row participate
-Example: ROWS BETWEEN 2 PRECEDING AND CURRENT ROW -- means:Current row + previous 2 rows
-This becomes especially useful for running totals, moving averages, and time-series analysis 
+Example: ROWS BETWEEN 2 PRECEDING AND CURRENT ROW -- Current row + previous 2 rows
+-> Useful for running totals, moving averages, and time-series analysis... 
 
--- Main Types of Window Functions 4 categories::
-- Ranking
+Main Types of Window Functions 4 categories::
+1. Ranking Fucntions
 - ROW_NUMBER()
 - RANK()
 - DENSE_RANK()
 - NTILE()
 
--- Aggregate window functions
-SUM()
-AVG()
-COUNT()
-MIN()
-MAX()
+2. Aggregate window functions
+- SUM() OVER()
+- AVG() OVER()
+- COUNT() OVER()
+- MIN()  OVER()
+- MAX() OVER()
 
--- Value / navigation functions
-LAG()
-LEAD()
-FIRST_VALUE()
-LAST_VALUE()
+3. Value /navigation functions
+- LAG()
+- LEAD()
+- FIRST_VALUE()
+- LAST_VALUE()
 
 -- Distribution functions
 PERCENT_RANK()
