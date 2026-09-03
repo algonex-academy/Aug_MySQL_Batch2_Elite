@@ -53,7 +53,7 @@ show databases();
 desc Tabel_name;
 explain table_name;
 
--- Window functions
+╰┈➤╰┈➤ Window functions
 Unlike ordinary aggregate functions: GROUP BY -> collapses several rows into one result row
 -> A window function performs a calculation across a set of related rows without collapsing those rows into a single row
 
@@ -91,9 +91,7 @@ OVER (
 )
 
 SELECT
-    employee_name,
-    department,
-    salary,
+    employee_name,department, salary,
     AVG(salary) OVER(
         PARTITION BY department
     ) AS avg_salary
@@ -119,7 +117,7 @@ C. Frame: Controls exactly which rows around the current row participate
 Example: ROWS BETWEEN 2 PRECEDING AND CURRENT ROW -- Current row + previous 2 rows
 -> Useful for running totals, moving averages, and time-series analysis... 
 
-Main Types of Window Functions 4 categories::
+╰┈➤Main Types of Window Functions 4 categories::
 1. Ranking Fucntions
 - ROW_NUMBER()
 - RANK()
@@ -146,7 +144,7 @@ CUME_DIST()
 ROW_NUMBER() -> RANK() -> DENSE_RANK() -> SUM() -> AVG() -> LAG() -> LEAD()
 
 
-1. ROW_NUMBER() :Assigns a unique sequential number to every row
+╰┈➤1. ROW_NUMBER() :Assigns a unique sequential number to every row
 ROW_NUMBER() OVER (
     [PARTITION BY column]
     ORDER BY column
@@ -282,193 +280,7 @@ FROM daily_sales;
 - inventory movement
 - financial reporting
 
-It is an attribute of a numeric data type:
-
-INT UNSIGNED
-BIGINT UNSIGNED
-SMALLINT UNSIGNED
-DECIMAL UNSIGNED
-
-If you have limited time, prioritize:
-
-1. JSON_EXTRACT()
-2. -> and ->>
-3. JSON_OBJECT()
-4. JSON_ARRAY()
-5. JSON_SET()
-6. JSON_REMOVE()
-7. JSON_CONTAINS()
-8. JSON_VALID()
-
-One example to understand the whole concept
-
-Suppose:
-
-{
-  "name": "Rahul",
-  "age": 23,
-  "skills": ["Python", "SQL"]
-}
-
-Stored in a column called profile.
-
--- Get name
-SELECT profile->>'$.name';
-
--- Get age
-SELECT profile->>'$.age';
-
--- Get skills
-SELECT profile->'$.skills';
-
--- Update age
-SELECT JSON_SET(profile, '$.age', 24);
-
--- Remove age
-SELECT JSON_REMOVE(profile, '$.age');
-
--- Check whether Python exists
-SELECT JSON_CONTAINS(profile, '"Python"', '$.skills');
-
-For a fresher, this level is more than enough initially. Focus especially on understanding JSON paths like $.name, $.age, and $.skills[0]—they are the key to using MySQL JSON functions effectively.
-
-Exaplain window fucntions with realtime industry examples, descrition indetail, clear along with standard syntax
-
-Absolutely. In MySQL, Window Functions are one of the most important SQL topics for interviews and real-world analytics.
-
-MySQL Window Functions
-1. What is a Window Function?
-
-A window function performs a calculation across a set of related rows without collapsing those rows into a single row.
-
-That last part is the key difference.
-
-Normal aggregate function
-
-Suppose we have:
-
-employees
-------------------------------------------------
-id | name   | department | salary
-------------------------------------------------
-1  | Rahul  | IT         | 60000
-2  | Priya  | IT         | 80000
-3  | Arun   | HR         | 50000
-4  | Sneha  | HR         | 70000
-
-Using GROUP BY:
-
-SELECT department, AVG(salary)
-FROM employees
-GROUP BY department;
-
-Result:
-
-IT   | 70000
-HR   | 60000
-
-The individual employee rows are gone.
-
-Window function
-SELECT
-    name,
-    department,
-    salary,
-    AVG(salary) OVER(PARTITION BY department) AS dept_avg_salary
-FROM employees;
-
-Result:
-
-Rahul | IT | 60000 | 70000
-Priya | IT | 80000 | 70000
-Arun  | HR | 50000 | 60000
-Sneha | HR | 70000 | 60000
-
-Every employee row remains.
-
-Remember
-
-GROUP BY = combines rows
-
-Window Function = keeps rows + calculates across related rows
-
-2. Standard Syntax
-
-The basic syntax is:
-
-window_function()
-OVER (
-    [PARTITION BY column]
-    [ORDER BY column]
-    [ROWS/RANGE frame_clause]
-)
-
-Example:
-
-SELECT
-    employee_name,
-    department,
-    salary,
-    AVG(salary) OVER(
-        PARTITION BY department
-    ) AS avg_salary
-FROM employees;
-
-The OVER() clause tells MySQL:
-
-"Perform this calculation using a window of rows."
-
-3. Three Important Parts of OVER()
-
-Think of it as:
-
-OVER (
-    PARTITION BY ...
-    ORDER BY ...
-    ROWS ...
-)
-A. PARTITION BY
-
-Divides rows into separate groups.
-
-Example:
-
-PARTITION BY department
-
-means:
-
-IT employees → one window
-HR employees → another window
-Finance employees → another window
-
-It is similar to GROUP BY, but doesn't collapse the rows.
-
-B. ORDER BY
-
-Controls the order in which rows are evaluated.
-
-ORDER BY salary DESC
-
-means highest salary first.
-
-C. Frame
-
-Controls exactly which rows around the current row participate.
-
-Example:
-
-ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
-
-means:
-
-Current row + previous 2 rows.
-
-This becomes especially useful for running totals, moving averages, and time-series analysis.
-
 4. Main Types of Window Functions
-
-For a fresher, organize them into four categories:
-
 Ranking
 ROW_NUMBER()
 RANK()
@@ -489,237 +301,11 @@ Distribution functions
 PERCENT_RANK()
 CUME_DIST()
 
-For interviews, the most important are:
-
-ROW_NUMBER() → RANK() → DENSE_RANK() → SUM() → AVG() → LAG() → LEAD()
-
-5. ROW_NUMBER()
-
-Assigns a unique sequential number to every row.
-
-Syntax
-ROW_NUMBER() OVER (
-    [PARTITION BY column]
-    ORDER BY column
-)
-Example
-SELECT
-    employee_name,
-    department,
-    salary,
-    ROW_NUMBER() OVER(
-        ORDER BY salary DESC
-    ) AS row_num
-FROM employees;
-
-Result:
-
-Priya | IT | 80000 | 1
-Sneha | HR | 70000 | 2
-Rahul | IT | 60000 | 3
-Arun  | HR | 50000 | 4
-
-Every row receives a unique number.
-
-Real industry example: latest order per customer
-
-Suppose:
-
-orders
---------------------------------------------------
-order_id | customer_id | order_date | amount
---------------------------------------------------
-101      | 1           | 2026-08-01 | 500
-102      | 1           | 2026-08-15 | 700
-103      | 2           | 2026-08-10 | 300
-104      | 1           | 2026-08-20 | 900
-
-We want the latest order of every customer.
-
-SELECT *
-FROM (
-    SELECT
-        order_id,
-        customer_id,
-        order_date,
-        amount,
-        ROW_NUMBER() OVER(
-            PARTITION BY customer_id
-            ORDER BY order_date DESC
-        ) AS rn
-    FROM orders
-) t
-WHERE rn = 1;
-
-Result:
-
-104 | 1 | 2026-08-20 | 900
-103 | 2 | 2026-08-10 | 300
-
-This is a very common industry pattern.
-
-6. RANK()
-
-Assigns the same rank to tied values.
-
-But it skips numbers after a tie.
-
-Example
-SELECT
-    employee_name,
-    salary,
-    RANK() OVER(
-        ORDER BY salary DESC
-    ) AS salary_rank
-FROM employees;
-
-Suppose salaries are:
-
-90000
-80000
-80000
-70000
-
-Result:
-
-90000 → 1
-80000 → 2
-80000 → 2
-70000 → 4
-
-Notice:
-
-1, 2, 2, 4
-
-Rank 3 is skipped.
-
-7. DENSE_RANK()
-
-Similar to RANK(), but does not skip numbers.
-
-Same salaries:
-
-90000
-80000
-80000
-70000
-
-Result:
-
-90000 → 1
-80000 → 2
-80000 → 2
-70000 → 3
-
-So:
-
-RANK()       → 1, 2, 2, 4
-DENSE_RANK() → 1, 2, 2, 3
-8. ROW_NUMBER() vs RANK() vs DENSE_RANK()
-
-This is one of the most common interview questions.
-
-Suppose:
-
-Salary
-------
-100000
-90000
-90000
-80000
-Salary	ROW_NUMBER	RANK	DENSE_RANK
-100000	1	1	1
-90000	2	2	2
-90000	3	2	2
-80000	4	4	3
-Easy memory trick
-
-ROW_NUMBER → always unique
-
-RANK → ties + gaps
-
-DENSE_RANK → ties + no gaps
-
-9. Real Industry Example: Top 3 Employees per Department
-
-This is extremely important.
-
-SELECT *
-FROM (
-    SELECT
-        employee_name,
-        department,
-        salary,
-        DENSE_RANK() OVER(
-            PARTITION BY department
-            ORDER BY salary DESC
-        ) AS salary_rank
-    FROM employees
-) t
-WHERE salary_rank <= 3;
-
-Meaning:
-
-IT → top 3 salaries
-HR → top 3 salaries
-Finance → top 3 salaries
-
-This pattern appears frequently in:
-
-employee analytics
-sales rankings
-product rankings
-customer spending
-regional performance
-10. SUM() as a Window Function
-
-You can use aggregate functions as window functions.
-
-Syntax
-SUM(column) OVER (
-    [PARTITION BY column]
-    [ORDER BY column]
-)
-
-Example:
-
-SELECT
-    order_date,
-    amount,
-    SUM(amount) OVER(
-        ORDER BY order_date
-    ) AS running_total
-FROM orders;
-
-Suppose:
-
-Date         Amount
-2026-08-01   100
-2026-08-02   200
-2026-08-03   150
-2026-08-04   300
-
-Result:
-
-Date         Amount   Running Total
-------------------------------------
-08-01        100      100
-08-02        200      300
-08-03        150      450
-08-04        300      750
-
-This is called a running total or cumulative sum.
 
 11. Industry Example: Running Sales Total
-
-For an e-commerce company:
-
-SELECT
-    order_date,
-    sales,
+SELECT order_date, sales,
     SUM(sales) OVER(
-        ORDER BY order_date
-    ) AS cumulative_sales
+        ORDER BY order_date ) AS cumulative_sales
 FROM daily_sales;
 
 Business teams use this for: revenue growth
@@ -740,7 +326,7 @@ SELECT
     ) AS cumulative_bonus
 FROM employees; -- Each department gets its own running total
 
--- AVG() as a Window Function
+╰┈➤ AVG() as a Window Function
 SELECT
     employee_name,
     department,
@@ -768,7 +354,7 @@ compensation gaps
 high performers
 salary benchmarking
 
--- COUNT() as a Window Function
+╰┈➤ COUNT() as a Window Function
 SELECT
     employee_name, department,
     COUNT(*) OVER(
@@ -927,9 +513,7 @@ Example: ROWS BETWEEN 2 PRECEDING AND CURRENT ROW  ( Previous 2 rows + Current r
 
 -- Common frame expressions
 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW -- Running calculation from the beginning
-
 ROWS BETWEEN 2 PRECEDING AND CURRENT ROW -- Current + previous 2 rows
-
 ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING -- Entire partition
 
 -- Real Industry Example: 7-Day Moving Average
