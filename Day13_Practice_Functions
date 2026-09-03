@@ -3,22 +3,23 @@ Algonex Industry Scenario: Imagine you work as a Junior Data Analyst / SQL Devel
 The business wants to analyze:
 - customer purchases
 product sales
-- employee/salesperson performance
-daily revenue
+- employee/sales person performance
+- daily revenue
 - customer spending
-rankings
+- rankings
 - growth
-repeat purchases
+- repeat purchases
 - top products
-moving averages
+- moving averages
 - percentile/segment analysis -> We will build one table and solve all of these with MySQL window functions
 
   -- Create the Database
-CREATE DATABASE ecommerce_analytics;
-USE ecommerce_analytics;
+CREATE DATABASE Flipkart_Operations;
+show databases;
+USE Flipkart_Operations;
 
 --3. Create the Main Table
-We'll create an orders table
+We'll create an orders table:
 CREATE TABLE orders (
     order_id INT PRIMARY KEY, -- Unique order
     order_date DATE NOT NULL, -- Date of purchase
@@ -27,7 +28,7 @@ CREATE TABLE orders (
     city VARCHAR(50),                    -- Customer city
     product_name VARCHAR(100),           -- Product purchased
     category VARCHAR(50),                -- Product category
-    quantity INT UNSIGNED NOT NULL,      -- Number of units
+    quantity INT UNSIGNED NOT NULL,      -- Number of units with +ve values
     unit_price DECIMAL(10,2) NOT NULL,  -- Price per unit
     sales_rep VARCHAR(100),              -- Employee handling sale
     payment_method VARCHAR(30)         -- Payment type
@@ -38,8 +39,8 @@ CREATE TABLE orders (
 (order_id, order_date, customer_id, customer_name, city,
  product_name, category, quantity, unit_price,
  sales_rep, payment_method)
-VALUES
 
+VALUES
 (101, '2026-01-01', 1, 'Rahul', 'Bangalore',
  'Laptop', 'Electronics', 1, 70000, 'Amit', 'UPI'),
 
