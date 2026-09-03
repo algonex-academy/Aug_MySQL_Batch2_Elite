@@ -1,8 +1,5 @@
 Algonex Industry Scenario: Imagine you work as a Junior Data Analyst / SQL Developer for an e-commerce company
 
-*Go through this everyone we're going to implement WINDOW FUNCTIONS in this flow practically TODAY:*
-https://github.com/algonex-academy/Aug_MySQL_Batch2_Elite/blob/main/Day13_Practice_Functions
-
 The business wants to analyze:
 - customer purchases
 product sales
@@ -103,3 +100,235 @@ VALUES
 (120, '2026-01-20', 1, 'Rahul', 'Bangalore',
  'Mobile', 'Electronics', 1, 26000, 'Amit', 'Card');
 
+
+-- First Create a Useful Derived Column (quantity × unit_price...ilaa evinaa chuskovali)
+SELECT
+    order_id,
+    customer_name,
+    product_name,
+    quantity,
+    unit_price,
+    quantity * unit_price AS order_amount
+FROM orders;
+
+window_function()
+OVER (
+    PARTITION BY ...
+    ORDER BY ...
+)
+
+Ee questions meeku: 
+Question 1: Do I need separate groups? - PARTITION BY
+Question 2: Do rows need an order? - ORDER BY
+Question 3: Do I need a specific number/range of rows? - ROWS BETWEEN ...
+
+PART A — RANKING FUNCTIONS meedha cheyandi
+1. Give every order a unique sequence number based on highest order value
+SELECT
+    order_id,customer_name,
+    quantity * unit_price AS order_amount,
+    ROW_NUMBER() OVER( -- Even when two values are equal, ROW_NUMBER() gives different numbers
+        ORDER BY quantity * unit_price DESC
+    ) AS row_num
+FROM orders;
+
+order amount   row_num
+75000          1
+72000          2
+70000          3
+65000          4
+...
+
+2. ROW_NUMBER() by Customer
+Problem 2: Number each customer's purchases chronologically
+SELECT
+    customer_id,customer_name, order_date,order_id,
+    ROW_NUMBER() OVER(
+        PARTITION BY customer_id
+        ORDER BY order_date
+    ) AS purchase_number
+FROM orders;
+
+Rahul
+Jan 1  - 1
+Jan 3  - 2
+Jan 8  - 3
+Jan 14 - 4
+Jan 20 - 5 -- This gives us customer purchase sequence
+
+Companysloo endukantee:
+first order
+second order
+repeat customer analysis
+customer lifecycle analysis
+
+3. Find the First Order of Every Customer(Infosysloo que)
+SELECT *
+FROM (
+    SELECT
+        order_id, customer_id, customer_name,order_date,
+        quantity * unit_price AS order_amount,
+        ROW_NUMBER() OVER(
+            PARTITION BY customer_id
+            ORDER BY order_date
+        ) AS rn
+    FROM orders
+) t
+WHERE rn = 1;
+
+Why the subquery?: Ikkada first Calculate row number -> Then filter rn = 1 -- The window function is calculated before the outer filter
+
+4. Find the Latest Order of Every Customer (Same idea, reverse the sorting):
+SELECT *
+FROM (
+    SELECT
+        order_id,customer_id, customer_name, order_date,
+        quantity * unit_price AS order_amount,
+        ROW_NUMBER() OVER(
+            PARTITION BY customer_id
+            ORDER BY order_date DESC
+        ) AS rn
+    FROM orders
+) t
+WHERE rn = 1;
+
+5. RANK(): Rank orders by amount
+SELECT
+    order_id,customer_name,
+    quantity * unit_price AS order_amount,
+    RANK() OVER(
+        ORDER BY quantity * unit_price DESC
+    ) AS amount_rank
+FROM orders; -- gap vachindaa?
+
+5.B anukondi: DENSE_RANK()
+SELECT
+    order_id, customer_name,
+    quantity * unit_price AS order_amount,
+    DENSE_RANK() OVER(
+        ORDER BY quantity * unit_price DESC
+    ) AS amount_rank
+FROM orders;
+
+6. RANK Employees by Sales: Let's calculate each salesperson's total sales first
+SELECT
+    sales_rep,
+    SUM(quantity * unit_price) AS total_sales
+FROM orders
+GROUP BY sales_rep;
+
+-- Now RANK ivvu:
+SELECT
+    sales_rep, total_sales,
+    RANK() OVER(
+        ORDER BY total_sales DESC
+    ) AS sales_rank
+FROM (
+    SELECT
+        sales_rep,
+        SUM(quantity * unit_price) AS total_sales
+    FROM orders
+    GROUP BY sales_rep
+) t; -- Oka business report vachindaa?
+
+7. Rank Customers by Total Spending
+SELECT
+    customer_id,customer_name, total_spending,
+    DENSE_RANK() OVER(
+        ORDER BY total_spending DESC
+    ) AS customer_rank
+FROM (
+    SELECT
+        customer_id,
+        customer_name,
+        SUM(quantity * unit_price) AS total_spending
+    FROM orders
+    GROUP BY customer_id, customer_name
+) t; -- Which customers are our highest-value customers? ecommerce vallu baaga vadtharu
+
+8. Top 3 Customers
+SELECT *
+FROM (
+    SELECT
+        customer_id,customer_name,  total_spending,
+        DENSE_RANK() OVER(
+            ORDER BY total_spending DESC
+        ) AS customer_rank
+    FROM (
+        SELECT
+            customer_id, customer_name,
+            SUM(quantity * unit_price) AS total_spending
+        FROM orders
+        GROUP BY customer_id, customer_name
+    ) x
+) y
+WHERE customer_rank <= 3;
+
+PART B — TOP N PER GROUP
+9. Top 2 Customers in Every City(TCS Que)
+SELECT * FROM (
+    SELECT city, customer_id, customer_name, total_spending,
+        DENSE_RANK() OVER(
+            PARTITION BY city
+            ORDER BY total_spending DESC
+        ) AS city_rank
+    FROM (
+        SELECT city,customer_id, customer_name,
+            SUM(quantity * unit_price) AS total_spending
+        FROM orders
+        GROUP BY city, customer_id, customer_name
+    ) t
+) x
+WHERE city_rank <= 2;
+
+-- PART C — AGGREGATE WINDOW FUNCTIONS
+10. SUM() OVER()
+Calculate total company sales while keeping every order
+SELECT
+    order_id,
+    order_date,
+    quantity * unit_price AS order_amount,
+    SUM(quantity * unit_price) OVER() AS company_total_sales
+FROM orders; -- Every row gets the same total
+
+11. Department-style Grouping with PARTITION BY
+SELECT
+    order_id,
+    category,
+    quantity * unit_price AS order_amount,
+    SUM(quantity * unit_price) OVER(
+        PARTITION BY category
+    ) AS category_total_sales
+FROM orders;
+
+-- individual order(Every Electronics order gets Electronics total)
+                                    vs
+category total(Every Accessories order gets Accessories total) without losing the individual row
+
+12. Calculate Percentage Contribution
+What percentage of category revenue did each order contribute?
+SELECT order_id,category,
+    quantity * unit_price AS order_amount,
+    SUM(quantity * unit_price) OVER(
+        PARTITION BY category) AS category_total,
+    ROUND(quantity * unit_price/ SUM(quantity * unit_price) OVER(
+            PARTITION BY category) * 100,2) AS category_percentage
+FROM orders;
+
+13. Running Total
+Show cumulative company revenue over time
+SELECT order_date,order_id, quantity * unit_price AS order_amount,
+    SUM(quantity * unit_price) OVER(
+        ORDER BY order_date
+    ) AS running_sales
+FROM orders;
+
+14. Running Total Per Customer
+SELECT customer_id,customer_name,order_date,
+    quantity * unit_price AS order_amount,
+    SUM(quantity * unit_price) OVER(
+        PARTITION BY customer_id
+        ORDER BY order_date ) AS customer_running_total
+FROM orders;
+
+Ikkada Rahul has his own cumulative spending, Priya has her own cumulative spending and sooo...
