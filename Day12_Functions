@@ -176,6 +176,7 @@ WHERE rn = 1;
 1 2  2
 4 3  1
 2 4  1
+row_number() over(order by c1)
 
 2. RANK(): Assigns the same rank to tied/similar values but it skips numbers after a tie/same value
 Example: SELECT employee_name, salary,
@@ -217,13 +218,32 @@ Salary
 90000
 80000
 
- Salary    ROW_NUMBER  RANK  DENSE_RANK 
+ Salary    ROW_NUMBER  RANK     DENSE_RANK 
  100000 |          1 |    1 |          1 
   90000 |          2 |    2 |          2        ROW_NUMBER -> always unique
   90000 |          3 |    2 |          2        RANK -> ties + gaps
   80000 |          4 |    4 |          3        DENSE_RANK -> ties + no gaps
 
 Deloite Que: Top 3 Employees per Department
+select department, max(salary) from employees
+group by department
+order by salary;
+
+CSE 1cr
+ECE 2cr
+EEE 50L
+
+select department, 
+     salary
+
+select departent,salary,dense_rank() over(order by salary desc) as top_employees from employees;
+CSE   1cr 1     
+CSE   90L 2
+CSE   90L 2
+ECE   80L 3
+EEE   80L 3
+EEE   70L 4
+
 SELECT * FROM (
     SELECT
         employee_name,
@@ -237,14 +257,12 @@ SELECT * FROM (
 ) t
 WHERE salary_rank <= 3;
 
--- 4. SUM() as a Window Function
-You can use aggregate functions as window functions
-
--- Syntax: SUM(column) OVER (
+###Aggregate fun as window functions:
+Syntax: SUM(column) OVER (
     [PARTITION BY column]
     [ORDER BY column]
 )
-
+1. SUM() as window function
 SELECT
     order_date,                       Order_date         Amount
     amount,                          2026-08-01           100
@@ -267,7 +285,7 @@ SELECT
         ORDER BY order_date
     ) AS cumulative_sales
 FROM daily_sales;
--- Aaacenture Business teams use this for:
+-- Aacenture Business teams use this for:
 - revenue growth
 - monthly targets
 - cumulative sales
