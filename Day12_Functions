@@ -338,7 +338,7 @@ SELECT
     ) AS cumulative_bonus
 FROM employees; -- Each department gets its own running total
 
-╰┈➤ AVG() as a Window Function
+╰┈➤ AVG() as a Window Function: To find out the running averages to compare values
 SELECT
     employee_name,
     department,
@@ -353,12 +353,14 @@ SELECT
     employee_name, department, salary,
     AVG(salary) OVER(
         PARTITION BY department) AS avg_salary,
-    salary - AVG(salary) OVER(
-        PARTITION BY department) AS difference_from_avg
+    salary - avg_salary AS difference_from_avg
 FROM employees;
 
-Rahul | IT | 60000 | 70000 | -10000
-Priya | IT | 80000 | 70000 |  10000
+employee_name depart salary avg_salary difference_from_avg
+         Rahul | IT | 60000 | 70000 | -10000
+         Priya | IT | 80000 | 70000 |  10000
+         Nagi  |Sales|50000 | 40000 |  10000
+         Heena |Sales|30000 | 40000 | -10000
 
 -- Mana HRs helps identify:
 employees below average
@@ -366,8 +368,8 @@ compensation gaps
 high performers
 salary benchmarking
 
-╰┈➤ COUNT() as a Window Function
-SELECT
+╰┈➤ COUNT() as a Window Function: To find count of each category/department
+Ex: SELECT
     employee_name, department,
     COUNT(*) OVER(
         PARTITION BY department
@@ -376,12 +378,12 @@ FROM employees;
 
 Anitha | IT | 2
 Bhavani | IT | 2
-NAnada  | HR | 2
-Kaveri | HR | 2
+NAnada  | HR | 3
+Kaveri | HR |  3
 
--- LAG(): LAG() gives you a value from a previous row
-
-Syntaax:LAG(column, offset, default_value)
+3. Value Navigation Functions: To find the pattern of how the values are changing 
+1. LAG(): LAG() gives you a value from a previous row
+Syntax:LAG(column, offset, default_value)
 OVER (
     [PARTITION BY column]
     ORDER BY column
@@ -429,21 +431,16 @@ FROM (
 ) t;
 
 -- You can calculate percentage growth too:
-
 SELECT
     order_date,
     sales,
     LAG(sales) OVER(
         ORDER BY order_date
     ) AS previous_sales,
-    ROUND(
-        (sales - LAG(sales) OVER(ORDER BY order_date))
-        / LAG(sales) OVER(ORDER BY order_date) * 100,
-        2
-    ) AS growth_percentage
+    ROUND( (sales - LAG(sales) OVER(ORDER BY order_date))/ LAG(sales) OVER(ORDER BY order_date) * 100 ,2) AS growth_percentage
 FROM daily_sales;
 
--- LEAD()
+2. LEAD(): This function gives value based on next value
 LEAD() is the opposite of LAG()
 
 LAG(): Look backward
@@ -486,13 +483,14 @@ SELECT
     ) AS next_order_date
 FROM orders; -- How many days until the customer's next purchase?
 
--- FIRST_VALUE() - Returns the first value in the window
+3. FIRST_VALUE() - Returns the first value in the window
 Syntax: FIRST_VALUE(column)
 OVER (
     [PARTITION BY column]
     ORDER BY column
 )
 
+Ex: First value from each category
 SELECT
     employee_name, department, salary,
     FIRST_VALUE(salary) OVER(
@@ -520,7 +518,7 @@ Example: SELECT employee_name, department, salary,
     ) AS lowest_salary
 FROM employees;
 
-╰┈➤ Window Frames (idi advanced but important concept)
+╰┈➤ 4. Window Frames (idi advanced but important concept)
 Example: ROWS BETWEEN 2 PRECEDING AND CURRENT ROW  ( Previous 2 rows + Current row)
 
 -- Common frame expressions
@@ -528,8 +526,8 @@ ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW -- Running calculation from the
 ROWS BETWEEN 2 PRECEDING AND CURRENT ROW -- Current + previous 2 rows
 ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING -- Entire partition
 
--- Real Industry Example: 7-Day Moving Average
-Suppose you have daily sales but You want a 7-day moving average
+Real Industry Example: 7-Day Moving Average
+-- Suppose you have daily sales but You want a 7-day moving average
 SELECT order_date, sales,
     AVG(sales) OVER(
         ORDER BY order_date
@@ -539,20 +537,21 @@ FROM daily_sales;
 
 -- Ikkada 6 PRECEDING antee? (6 previous days + current day = 7 rows)
 
-╰┈➤ NTILE(): Divides rows into approximately equal groups
+╰┈➤ NTILE(): It Divides rows into approximately equal groups/window partitions
 Syntax: NTILE(number)
 OVER (
     [PARTITION BY column]
     ORDER BY column
 )
 
+Ex: Divide the salary into 4 equal parts
 SELECT
     employee_name,
     salary,
     NTILE(4) OVER(
         ORDER BY salary DESC
     ) AS salary_quartile
-FROM employees;
+FROM employees; - 4 divisions with 25% in each division
 
 Employees are divided into 4 groups:
 1 -> Top 25%                                   useful in:
@@ -566,7 +565,7 @@ PERCENT_RANK() OVER (
     ORDER BY column
 )
 
--- Mundhu iovi raavali ok: ROW_NUMBER, RANK, DENSE_RANK, SUM, AVG, LAG, LEAD
+-- Mundhu ivi raavali ok: ROW_NUMBER, RANK, DENSE_RANK, SUM, AVG, LAG, LEAD
 
 GROUP BY ->reduces rows
 WINDOW FUNCTION -preserves rows
@@ -628,3 +627,6 @@ RANK() OVER(
     ORDER BY salary DESC
 )
 
+
+Estb year, PG_id, PG_name, Address/Area, pincode, Category, City, State, Owner_Name,Parking, Gym, Lift
+Contact, Rent, Sharing, Deposit, Food_Specials, Facilities, Feedback, Rules, Rating, SecurityCCTV(Yes/No), Self_Cooking(Yes/No)
