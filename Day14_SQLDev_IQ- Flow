@@ -1,0 +1,235 @@
+“So from today, definition memorization is not enough. Understanding + application + explanation — these three are mandatory.”
+  
+ఇంకో ruthless point:
+"If you can write a query but cannot explain why you wrote it, you don't actually know SQL"
+
+  PART 2 — Teach Them the SQL Thinking Framework
+Whenever a question comes: 
+Step 1 — Understand the requirement Question ఏం అడుగుతోంది?
+- Data retrieve చేయాలా?
+- Filter చేయాలా?
+- Sort చేయాలా?
+- Group చేయాలా?
+ -Aggregate చేయాలా?
+- Multiple tables combine చేయాలా?
+- Data insert/update/delete చేయాలా?
+- Structure create/modify చేయాలా?
+
+  Step 2 — Identify the table
+“Which table contains the required information?”
+
+  Step 3 — Identify columns
+“Exactly which columns do I need?”
+
+Step 4 — Identify conditions
+“Do I need WHERE?”
+
+Step 5 — Identify operation
+Examples:
+COUNT() - number
+SUM() - total
+AVG() - average
+MAX() - highest
+MIN() - lowest
+
+  Step 6 — Identify relationships
+Multiple tables ఉంటే: “How are these tables connected?” -- అక్కడే JOIN thinking వస్తుంది
+
+  Step 7 — Write the query
+Step 8 — Validate the result
+“Does this result actually answer the requirement?”
+
+Step 9 — Explain it
+Interviewలో: Requirement - Approach - Query - Result -- ee 4 steps imp meeku
+
+  PART 3 — Concept Revision Method(D → W → E → H → I)
+D = Definition (What is it?)
+W = Why?(Why do we need it?)
+E = Example(Simple example)
+H = Hands-on(Write/use it)
+I = Interview(How can interviewer ask it?)
+
+Oka Example: VARCHAR
+Definition:
+VARCHAR stores variable-length character data.
+
+Why?
+Because names, emails, usernames etc. don't always have the same length.
+
+Real-time: Instagram username, customer name, email.
+
+Hands-on chyali:
+CREATE TABLE users (
+    username VARCHAR(50)
+);
+
+Interview: “Why did you choose VARCHAR instead of CHAR?”
+
+Expected thinking: VARCHAR is generally suitable when the stored strings have variable lengths, while CHAR is fixed-length -- That's how you should study every concept
+
+  PART 4 — Data Types Revision
+"You're designing an Instagram-like application. Choose appropriate data types"
+
+ Requirement         Possible Type               Why                     
+ User ID           | INT/BIGINT         | Numeric identifier      
+ Username          | VARCHAR            | Variable-length text    
+ Age               | INT                | Whole number            
+ Price             | DECIMAL            | Exact numeric precision 
+ Date of birth     | DATE               | Date only               
+ Created timestamp | DATETIME/TIMESTAMP | Date + time             
+ Active status     | BOOLEAN            | True/false              
+
+-- Interview traps chudu
+1. Why not VARCHAR for everything?
+Because the database should represent the nature of the data appropriately, enabling proper validation, operations, storage characteristics, and query behavior
+
+2. Why DECIMAL instead of FLOAT for money?
+Because financial values generally require exact decimal representation rather than approximate floating-point representation
+
+PART 5 — Constraints
+users
+----------------                “Which fields should be mandatory?”
+user_id                         “Which field should uniquely identify the user?”
+email                           “Can two users have the same email?”
+username
+phone
+created_at
+
+PRIMARY KEY
+NOT NULL
+UNIQUE
+DEFAULT             “What business problem does this constraint solve?”
+CHECK
+FOREIGN KEY
+
+PART 6 — Commands Revision
+Scenario chudu: 
+Company wants a new customer table
+What do you use? → CREATE
+Company wants to add a column → ALTER
+Company wants to remove the table. → DROP
+Company wants to remove all records but retain structure→ TRUNCATE
+Company wants to add customer data → INSERT
+Company wants to modify customer information → UPDATE
+Company wants to remove selected records → DELETE
+Company wants to retrieve data → SELECT
+
+  => “What's the difference between DROP, TRUNCATE and DELETE?”
+
+  PART 7 — SELECTThinking
+  SELECT -- What do I want?
+    columns
+FROM     -- Where is it?
+    table
+WHERE    -- Which rows do I want?
+    condition
+GROUP BY -- How should I create groups?
+    grouping_column              “Ikkada Don't memorize this as syntax. Understand the job of each clause”
+HAVING  -- Which groups do I want?
+    aggregate_condition
+ORDER BY -- How should I arrange the output?
+    sorting_column
+LIMIT    -- How many rows do I need?
+    number;
+
+PART 8 — WHERE vs HAVING
+  “I want employees whose salary is greater than ₹50,000” -> WHERE (filtering rows)
+  “I want departments whose average salary is greater than ₹50,000” -> HAVING (filtering groups after aggregation)
+
+PART 9 — Functions
+Aggregate (" I need one result from multiple rows?")
+COUNT
+SUM
+AVG
+MIN
+MAX
+
+-- String
+UPPER
+LOWER
+LENGTH
+CONCAT
+SUBSTRING
+  
+-- Date/Time
+NOW
+CURDATE
+YEAR
+MONTH
+DATEDIFF
+  
+-- Numeric
+ROUND
+CEIL
+FLOOR
+ABS
+
+PART10 — JOINS = Most Important Revision
+"JOIN is not something you memorize using Venn diagrams. JOIN is a relationship problem"
+
+Exampleki: customers
+          customer_id
+          name
+
+        orders
+          order_id
+          customer_id
+          amount
+"Give me customer names and their orders" 
+  Where is customer name? - customers
+Where is order information? - orders & What connects them? - customer_id
+
+SELECT c.name, o.order_id, o.amount
+FROM customers c
+JOIN orders o
+ON c.customer_id = o.customer_id;
+
+-- JOINki oka Mental Model
+INNER JOIN: Give me matching records from both tables
+LEFT JOIN: Give me everything from the left table, and matching data from the right if available(Give me all customers, including customers who never placed an order)
+
+  PART 11 — Interview Attack Round
+-- Basic
+What is SQL?
+What is MySQL?
+SQL vs MySQL?
+What is a database?
+What is a table?
+What is a primary key?
+Why do we need constraints?
+VARCHAR vs CHAR?
+DELETE vs TRUNCATE?
+DROP vs TRUNCATE?
+
+-- Intermediate
+WHERE vs HAVING?
+GROUP BY purpose?
+Why use aggregate functions?
+What is a foreign key?
+What is referential integrity?
+What is UNIQUE?
+Can a table have multiple UNIQUE constraints?
+Can a table have multiple primary keys?
+Why use aliases?
+What is the purpose of JOIN?
+  
+-- Scenario-based
+Find customers who never placed an order
+Find total orders per customer
+Find average salary by department
+Find departments having average salary > 50,000
+Find employees who joined after 2024
+Find the highest salary
+Find customers from a particular city
+Combine customer and order information
+Find records existing in one table but not another
+
+-- How To Answer Theory Questions
+  Use this structure: Definition -> Purpose -> Example
+
+Example: What is a primary key?
+Primary key uniquely identifies each record -- Ilaa vodhu 
+  
+Better: A primary key is a column or combination of columns used to uniquely identify each row in a table. It helps maintain entity uniqueness and cannot contain NULL values. For example, in a customer table, customer_id can be used as the primary key
+
+  
