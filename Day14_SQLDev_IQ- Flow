@@ -42,7 +42,7 @@ Step 8 — Validate the result
 Step 9 — Explain it
 Interviewలో: Requirement - Approach - Query - Result -- ee 4 steps imp meeku
 
-  PART 3 — Concept Revision Method(D → W → E → H → I)
+  PART 3 — Concept Revision Method(D -> W -> E -> H -> I)
 D = Definition (What is it?)
 W = Why?(Why do we need it?)
 E = Example(Simple example)
@@ -50,21 +50,19 @@ H = Hands-on(Write/use it)
 I = Interview(How can interviewer ask it?)
 
 Oka Example: VARCHAR
-Definition:
-VARCHAR stores variable-length character data.
+Definition: VARCHAR stores variable-length character data
 
 Why?
-Because names, emails, usernames etc. don't always have the same length.
+Because names, emails, usernames etc. don't always have the same length
 
-Real-time: Instagram username, customer name, email.
+Real-time: Instagram username, customer name, email
 
 Hands-on chyali:
 CREATE TABLE users (
     username VARCHAR(50)
 );
 
-Interview: “Why did you choose VARCHAR instead of CHAR?”
-
+Interview: Why did you choose VARCHAR instead of CHAR?
 Expected thinking: VARCHAR is generally suitable when the stored strings have variable lengths, while CHAR is fixed-length -- That's how you should study every concept
 
   PART 4 — Data Types Revision
@@ -105,14 +103,14 @@ FOREIGN KEY
 PART 6 — Commands Revision
 Scenario chudu: 
 Company wants a new customer table
-What do you use? → CREATE
-Company wants to add a column → ALTER
-Company wants to remove the table. → DROP
-Company wants to remove all records but retain structure→ TRUNCATE
-Company wants to add customer data → INSERT
-Company wants to modify customer information → UPDATE
-Company wants to remove selected records → DELETE
-Company wants to retrieve data → SELECT
+What do you use? -> CREATE
+Company wants to add a column -> ALTER
+Company wants to remove the table -> DROP
+Company wants to remove all records but retain structure -> TRUNCATE
+Company wants to add customer data -> INSERT
+Company wants to modify customer information -> UPDATE
+Company wants to remove selected records -> DELETE
+Company wants to retrieve data -> SELECT
 
   => “What's the difference between DROP, TRUNCATE and DELETE?”
 
@@ -213,7 +211,7 @@ Can a table have multiple primary keys?
 Why use aliases?
 What is the purpose of JOIN?
   
--- Scenario-based
+-- Scenario-based cheyandii
 Find customers who never placed an order
 Find total orders per customer
 Find average salary by department
