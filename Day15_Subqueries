@@ -1,0 +1,155 @@
+= vs IN
+
+WHERE salary > (
+    SELECT AVG(salary)
+    FROM employees
+)
+
+WHERE department_id = (
+    SELECT department_id
+    FROM departments
+    WHERE location = 'Bengaluru'
+)
+
+WHERE department_id IN ( -- In checks "Does this value belong to this result set?"
+    SELECT department_id
+    FROM departments
+    WHERE location = 'Bengaluru'
+) -- Before choosing an operator ask: What can my subquery return — one value or multiple values?
+
+-- EXISTS: Does at least one matching row exist?
+
+Find customers who have placed at least one order(Same like IN)
+SELECT * FROM customers c
+WHERE EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.customer_id = c.customer_id
+); -- Return this customer if at least one matching order exists(correlated subquery)
+
+/* “IN is useful when I'm comparing a value against a set of returned values, while EXISTS is useful when I only need to know whether a matching row exists
+The optimizer may transform these queries, so I wouldn't claim one is universally faster */
+
+-- Correlated vs Non-Correlated Subquery(Imp for Interview)
+Non-correlated: Inner query can execute independently
+SELECT *
+FROM employees
+WHERE salary > (
+    SELECT AVG(salary)
+    FROM employees
+); -- Ikkada Inner query doesn't depend on outer query
+
+-- Correlated: Inner query depends on the current row of the outer query
+Ex: Find employees whose salary is greater than the average salary of their own department
+SELECT * FROM employees e
+WHERE salary > (
+    SELECT AVG(e2.salary)
+    FROM employees e2
+    WHERE e2.department_id = e.department_id
+);
+
+        Non-correlated = inner query can run independently
+        Correlated = inner query depends on the outer query's current row
+
+Find employees whose salary is greater than their department's average salary
+SELECT e.employee_id, e.name,e.salary, e.department_id
+FROM employees e
+WHERE e.salary > (
+    SELECT AVG(e2.salary)
+    FROM employees e2
+    WHERE e2.department_id = e.department_id
+);
+
+NOT EXISTS — Real-Time Problem (Checks for no matching recordS)
+Ex: Find customers who have NEVER placed an order
+SELECT * FROM customers c
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.customer_id = c.customer_id
+);
+
+-- ANY
+Ex: Find employees whose salary is greater than at least one employee in department 10
+SELECT * FROM employees
+WHERE salary > ANY (
+    SELECT salary
+    FROM employees
+    WHERE department_id = 10
+); -- Ikkada >ANY means Greater than at least one value
+
+-- ALL
+Ex: Find employees whose salary is greater than every employee in department 10
+SELECT * FROM employees
+WHERE salary > ALL (
+    SELECT salary
+    FROM employees
+    WHERE department_id = 10
+);
+
+            > ANY -> at least one
+            > ALL -> every
+-> salary > ANY (...) means salary > at least one of them
+-> salary > ALL (...) means salary > 40000 and > 50000 and > 60000
+
+-- Subquery in FROM
+Ikkada prathisari A subquery doesn't have to be inside WHERE
+
+SELECT department_id, avg_salary
+FROM ( -- A subquery in FROM is commonly called a derived table
+    SELECT department_id,
+           AVG(salary) AS avg_salary
+    FROM employees
+    GROUP BY department_id
+) AS dept_stats; -- Here the subquery acts like a temporary result set/table for the outer query
+
+FROM (subquery) AS alias -- The alias is required for this derived table in MySQ
+
+Amazon-like system
+customers(customer_id, name)
+orders(order_id, customer_id, amount, order_date)
+employees(employee_id, name, department_id, salary)
+departments(department_id, department_name, location)
+
+-- Solve this 10 problems
+Employees earning above company average
+Employees earning above their department average
+Customers who have placed at least one order
+Customers who have never placed an order
+Customers whose total order amount is above the average customer order amount
+Employees belonging to Bengaluru departments
+Employees earning more than every employee in department 10
+Employees earning more than at least one employee in department 10
+Departments whose average salary is greater than company average salary
+Find customers whose latest order amount is greater than their own average order amount
+
+_-Ikkada what's the query kadhu oka procedure follow avvu
+SUBQUERY = I need the result of one query to solve another query
+1. What is the requirement?
+2. What information do we need first?
+3. Does that information come from another query?
+4. Will the inner query return one value or multiple values?
+5. Does the inner query depend on the outer row?
+6. Which operator/pattern fits?
+7. Now write the SQL.
+8. Explain your query in English
+
+One value        → Scalar subquery
+Multiple values  → IN / ANY / ALL
+Existence        → EXISTS
+Non-existence    → NOT EXISTS
+Outer-row dependent → Correlated subquery
+Temporary result set → Derived table
+
+If you memorize 20 subquery queries today, you will forget them next month. If you understand what information the outer query needs from the inner query, you can construct the query even when the interviewer gives you a completely new problem
+
+“Your goal is not to remember the query. Your goal is to recognize the pattern
+
+-- Mee practise kosam
+Question 1: Find employees earning more than the average salary(Need average ->One value -> Scalar subquery)
+Question 2: Find employees working in departments located in Bengaluru( Find Bengaluru department IDs ->Multiple values -> IN)
+Question 3: Find customers who placed at least one orde(Need to check existence -> EXISTs)
+Question 4: Find customers who never placed an order(Need absence ->NOT EXISTS)
+Question 5: Find employees earning more than their department's average(Average depends on employee's department-> Correlated subquery)
+Question 6: Find employees earning more than every employee in department 10( Multiple values + must exceed every value -> ALL)
+Question 7: Find employees earning more than at least one employee in department 10( Multiple values + at least one -> ANY)
