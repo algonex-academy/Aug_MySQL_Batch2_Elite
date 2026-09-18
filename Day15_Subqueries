@@ -1,25 +1,26 @@
-= vs IN
+Diff btw = vs IN
 
-WHERE salary > (
+WHERE salary = (
     SELECT AVG(salary)
     FROM employees
-)
+) -- Result is possible
 
 WHERE department_id = (
     SELECT department_id
     FROM departments
     WHERE location = 'Bengaluru'
-)
+) -- Result is not possible
 
-WHERE department_id IN ( -- In checks "Does this value belong to this result set?"
+-- IN Example(IN checks "Does this value belong to this result set?")
+WHERE department_id IN ( 
     SELECT department_id
     FROM departments
     WHERE location = 'Bengaluru'
-) -- Before choosing an operator ask: What can my subquery return — one value or multiple values?
+) 
+-- Before choosing an operator, ask: What can my subquery return — one value or multiple values?
 
--- EXISTS: Does at least one matching row exist?
-
-Find customers who have placed at least one order(Same like IN)
+EXISTS: (Does at least one matching row exist?) - Correlated Subquery
+Ex: Find customers who have placed at least one order(Same like IN)
 SELECT * FROM customers c
 WHERE EXISTS (
     SELECT 1
@@ -27,13 +28,12 @@ WHERE EXISTS (
     WHERE o.customer_id = c.customer_id
 ); -- Return this customer if at least one matching order exists(correlated subquery)
 
-/* “IN is useful when I'm comparing a value against a set of returned values, while EXISTS is useful when I only need to know whether a matching row exists
+/* IN is useful when I'm comparing a value against a set of returned values, while EXISTS is useful when I only need to know whether a matching row exists
 The optimizer may transform these queries, so I wouldn't claim one is universally faster */
 
 -- Correlated vs Non-Correlated Subquery(Imp for Interview)
 Non-correlated: Inner query can execute independently
-SELECT *
-FROM employees
+Ex: SELECT * FROM employees
 WHERE salary > (
     SELECT AVG(salary)
     FROM employees
@@ -51,7 +51,7 @@ WHERE salary > (
         Non-correlated = inner query can run independently
         Correlated = inner query depends on the outer query's current row
 
-Find employees whose salary is greater than their department's average salary
+Ex: Find employees whose salary is greater than their department's average salary
 SELECT e.employee_id, e.name,e.salary, e.department_id
 FROM employees e
 WHERE e.salary > (
@@ -72,16 +72,18 @@ WHERE NOT EXISTS (
 -- ANY
 Ex: Find employees whose salary is greater than at least one employee in department 10
 SELECT * FROM employees
-WHERE salary > ANY (
+WHERE salary > ANY ( 
     SELECT salary
     FROM employees
-    WHERE department_id = 10
+    WHERE department_id = 'HR'
 ); -- Ikkada >ANY means Greater than at least one value
+
+2L > ANY (1L, 2L, 3L...
 
 -- ALL
 Ex: Find employees whose salary is greater than every employee in department 10
 SELECT * FROM employees
-WHERE salary > ALL (
+WHERE salary < ALL (
     SELECT salary
     FROM employees
     WHERE department_id = 10
@@ -89,14 +91,14 @@ WHERE salary > ALL (
 
             > ANY -> at least one
             > ALL -> every
--> salary > ANY (...) means salary > at least one of them
--> salary > ALL (...) means salary > 40000 and > 50000 and > 60000
+salary > ANY (...) means salary > at least one of them
+salary > ALL (...) means salary > 40000 and > 50000 and > 60000
 
--- Subquery in FROM
+-- Subquery in FROM(Derived table)
 Ikkada prathisari A subquery doesn't have to be inside WHERE
 
 SELECT department_id, avg_salary
-FROM ( -- A subquery in FROM is commonly called a derived table
+FROM (                   -- A subquery in FROM is commonly called a derived table
     SELECT department_id,
            AVG(salary) AS avg_salary
     FROM employees
