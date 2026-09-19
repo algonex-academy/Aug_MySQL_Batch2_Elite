@@ -63,7 +63,7 @@ SELECT * FROM order_dashboard;
 -- Table vs View
  Table                                               View                                           
  Stores actual data                | Stores the view definition/query               
- Physical database object          | Logical/virtual representation                 
+ Physical database object          | Temporary/virtual representation                 
  Data directly exists in the table | Result is obtained from underlying tables      
  Can have indexes on the table     | You don't normally index a regular view itself 
  Used for storing data             | Used for presenting/reusing data               
@@ -76,7 +76,8 @@ name
 email
 phone
 password_hash
-address -- You don't want every analyst accessing sensitive columns
+address -- You don't want every analyst accessing sensitive columns like address, password_hash, phone
+
 
 CREATE VIEW customer_public AS
 SELECT
@@ -86,12 +87,6 @@ SELECT
 FROM customers; -- Now users can be given access to the view rather than the underlying sensitive table
 
 Let's Build Our Grocery Database
-CREATE TABLE customers (
-    customer_id INT PRIMARY KEY,
-    customer_name VARCHAR(100),
-    city VARCHAR(50)
-);
-
 CREATE TABLE customers (
     customer_id INT PRIMARY KEY,
     customer_name VARCHAR(100),
@@ -122,14 +117,4 @@ SELECT
 FROM orders
 WHERE status IN ('PLACED', 'PACKED', 'OUT_FOR_DELIVERY');
 
-CREATE VIEW active_orders AS
-SELECT
-    order_id,
-    customer_id,
-    store_id,
-    order_date,
-    status,
-    total_amount
-FROM orders
-WHERE status IN ('PLACED', 'PACKED', 'OUT_FOR_DELIVERY');
-
+select*from active_orders;
