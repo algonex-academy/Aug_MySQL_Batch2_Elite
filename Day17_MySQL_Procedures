@@ -1,0 +1,278 @@
+╰┈➤ MySQL Stored Procedures — From Scratch to Real-Time Production
+A Stored Procedure is a named program stored inside the MySQL server that can accept inputs, execute multiple SQL statements 
+and control-flow logic, modify data, manage transactions, and return result sets or values through parameters
+
+1. First Understand the Problem
+Imagine we are building a Zepto/Instamart-style quick-commerce system
+Customer places order
+        |
+Validate customer
+        |
+Check product
+        |
+Check inventory
+        |
+Create order
+        |
+Create order item
+        |
+Reduce inventory
+        |
+Calculate amount
+        |
+Commit transaction
+
+=> Now imagine your application has to execute 8–10 SQL statements every time an order is placed
+# Without a stored procedure, the application might contain all that logic:
+
+Python / Java / Node
+  |
+SQL 1
+SQL 2
+SQL 3
+SQL 4
+SQL 5
+...
+
+With a stored procedure:
+Application
+     |
+CALL place_order(...)
+    |
+MySQL
+  |
+Multiple SQL operations
+
+-> A stored procedure can contain a compound body with multiple statements, declarations, loops, and conditionals
+
+Example: 
+DELIMITER //
+
+CREATE PROCEDURE get_all_orders() -- Procedure name and parameter list
+BEGIN
+    SELECT *
+    FROM orders;
+END //
+
+DELIMITER ;
+
+CALL get_all_orders(); -- Run Query
+
+-- DELIMITER?
+SELECT * FROM orders; -- Here ; means query end/statement finished
+But our procedure has multiple semicolons:
+BEGIN
+    SELECT ...;
+    UPDATE ...;
+    INSERT ...;
+END -- we temporarily change endpoint/delimiter to (//, %%,$$...)
+
+Procedure With an Input Parameter(IN, OUT, INOUT)
+IN - Input enters the procedure (Application -> Procedure)
+=> Antee meeru money transfer kosam particular person inputga isthaaru kadaa anthee
+Ex: Get all orders for a particular customer
+DELIMITER //
+CREATE PROCEDURE get_customer_orders(IN p_customer_id INT)
+BEGIN
+    SELECT order_id,order_date,  status, total_amount FROM orders
+    WHERE customer_id = p_customer_id;
+END //
+DELIMITER ;
+CALL get_customer_orders(101); 
+
+OUT Parameter - Procedure sends a value back (Procedure -> Caller)
+Ex: Give me the total number of orders for a customer
+DELIMITER //
+CREATE PROCEDURE get_order_count(
+    IN p_customer_id INT,
+    OUT p_order_count INT                            customer_id = 101
+)                                                            |
+BEGIN                                                   procedure
+    SELECT COUNT(*)                                          |
+    INTO p_order_count                                     COUNT(*)
+    FROM orders                                              |
+    WHERE customer_id = p_customer_id;                  OUT parameter
+END //                                                       |
+DELIMITER ;                                              @total_orders
+
+CALL get_order_count(101, @total_orders);
+SELECT @total_orders; -- @total_orders means we need a session variable to receive the OUT
+
+INOUT - Value comes in, gets modified, and goes back out(Caller <-> Procedure)
+MySQL allows procedure calls to return values through OUT and INOUT parameters
+
+Ex: Let's say a loyalty system receives a customer's current points and adds bonus points
+DELIMITER //
+
+CREATE PROCEDURE add_bonus_points(
+    INOUT p_points INT,
+    IN p_bonus INT
+)
+BEGIN
+    SET p_points = p_points + p_bonus;
+END //
+DELIMITER ;
+
+-- Call
+SET @points = 500;
+CALL add_bonus_points(@points, 100);
+SELECT @points; -- 600
+
+-- Variables
+Ex: Calculate whether an order qualifies for free delivery
+DELIMITER //
+
+CREATE PROCEDURE check_free_delivery(IN p_order_amount DECIMAL(10,2))       Parameter
+BEGIN                                                                            |
+    DECLARE v_delivery_fee DECIMAL(10,2);                                    Variable
+                                                                                 |
+    IF p_order_amount >= 499 THEN                                            IF condition                                                            
+        SET v_delivery_fee = 0;                                                 SET
+    ELSE                                                                          |
+        SET v_delivery_fee = 40;                                               Result
+    END IF;
+
+    SELECT
+        p_order_amount AS order_amount,
+        v_delivery_fee AS delivery_fee;
+END //
+DELIMITER ;
+
+CALL check_free_delivery(600);
+
+-- IF / ELSEIF / ELSE
+IF condition THEN
+    statements;
+
+ELSEIF condition THEN
+    statements;
+
+ELSE
+    statements;
+END IF;
+
+Example: 
+Example:
+
+DELIMITER //
+
+CREATE PROCEDURE classify_order(IN p_amount DECIMAL(10,2))
+BEGIN
+    IF p_amount >= 2000 THEN SELECT 'PREMIUM ORDER' AS order_type;
+    ELSEIF p_amount >= 1000 THEN SELECT 'HIGH VALUE ORDER' AS order_type;
+    ELSE SELECT 'REGULAR ORDER' AS order_type;
+    END IF;
+
+END //
+DELIMITER ;
+
+CALL classify_order(2500);
+CALL classify_order(1500);
+CALL classify_order(500);
+
+-- Procedure With Multiple SQL Statements
+Multiple statements that represent one business operation should usually be considered together from a transaction perspective
+DELIMITER //
+
+CREATE PROCEDURE register_customer(
+    IN p_name VARCHAR(100),
+    IN p_email VARCHAR(150),
+    IN p_city VARCHAR(50)
+)
+BEGIN
+    INSERT INTO customers(name, email, city)
+    VALUES (p_name, p_email, p_city);
+
+    INSERT INTO customer_wallet(customer_id, balance)
+    VALUES (LAST_INSERT_ID(), 0);
+
+    INSERT INTO loyalty_accounts(customer_id, points)
+    VALUES (LAST_INSERT_ID(), 0);
+END //
+DELIMITER ;
+
+-- Stored Procedure + TRANSACTION(TCL) chedhama 
+-> A stored procedure isn't just a saved SELECT. It can contain actual business workflow logic
+Real-Time place_order Procedure: Let's say kush vardhan places an order from Algonex store
+-- products
+product_id
+product_name
+price
+
+-- inventory
+product_id
+store_id
+quantity
+
+-- orders
+order_id
+customer_id
+store_id
+total_amount
+status
+
+DELIMITER //
+CREATE PROCEDURE place_order( IN p_customer_id INT, IN p_store_id INT,  IN p_product_id INT, IN p_quantity INT)
+BEGIN
+    DECLARE v_stock INT;
+    DECLARE v_price DECIMAL(10,2);
+    DECLARE v_total DECIMAL(10,2);
+
+    START TRANSACTION;
+
+    SELECT quantity INTO v_stock FROM inventory
+    WHERE product_id = p_product_id AND store_id = p_store_id FOR UPDATE; 
+/* Two customers simultaneously attempt to buy 4 units
+Without proper concurrency control, both transactions could make decisions based on stale availability so will lock the selected rows which stops concurrent operations*/
+
+    IF v_stock IS NULL THEN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Product not available in this store';
+/* Instead of letting the application receive an obscure database error, we can deliberately raise an application-meaningful error */
+
+    ELSEIF v_stock < p_quantity THEN ROLLBACK;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient inventory';
+    ELSE
+
+        SELECT price INTO v_price FROM products
+        WHERE product_id = p_product_id;
+        SET v_total = v_price * p_quantity;
+
+        INSERT INTO orders(customer_id, store_id, total_amount, status)
+        VALUES (p_customer_id, p_store_id, v_total, 'PLACED');
+
+        UPDATE inventory
+        SET quantity = quantity - p_quantity
+        WHERE product_id = p_product_id AND store_id = p_store_id;
+
+        COMMIT;
+        SELECT
+            'ORDER PLACED' AS message,
+            LAST_INSERT_ID() AS order_id,
+            v_total AS total_amount;
+    END IF;
+END //
+DELIMITER ;
+
+CALL place_order(101, 10, 501, 2);
+
+-- Procedure + Loop
+DELIMITER //
+CREATE PROCEDURE generate_numbers()
+BEGIN
+    DECLARE v_num INT DEFAULT 1;
+    WHILE v_num <= 5 DO
+        SELECT v_num;
+        SET v_num = v_num + 1;
+    END WHILE;
+END //
+DELIMITER ;
+
+CALL generate_numbers();
+
+Table -> stores
+View -> shows
+Procedure -> does
+Function -> calculates/returns
+Trigger -> react
+
