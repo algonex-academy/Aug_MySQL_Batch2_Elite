@@ -68,6 +68,11 @@ BEGIN
 END -- we temporarily change endpoint/delimiter to (//, %%,$$...)
 
 Procedure With an Input Parameter(IN, OUT, INOUT)
+
+def Algonex(q,r=80):
+     return q-5+r
+Algonex(r=40, q=30)
+
 IN - Input enters the procedure (Application -> Procedure)
 => Antee meeru money transfer kosam particular person inputga isthaaru kadaa anthee
 Ex: Get all orders for a particular customer
@@ -80,7 +85,7 @@ END //
 DELIMITER ;
 CALL get_customer_orders(101); 
 
-OUT Parameter - Procedure sends a value back (Procedure -> Caller)
+OUT Parameter - Here Procedure sends a value back like an output (Procedure -> Caller)
 Ex: Give me the total number of orders for a customer
 DELIMITER //
 CREATE PROCEDURE get_order_count(
@@ -98,16 +103,12 @@ DELIMITER ;                                              @total_orders
 CALL get_order_count(101, @total_orders);
 SELECT @total_orders; -- @total_orders means we need a session variable to receive the OUT
 
-INOUT - Value comes in, gets modified, and goes back out(Caller <-> Procedure)
+INOUT - here the Value comes in, gets modified, and goes back out(Caller <-> Procedure)
 MySQL allows procedure calls to return values through OUT and INOUT parameters
 
 Ex: Let's say a loyalty system receives a customer's current points and adds bonus points
 DELIMITER //
-
-CREATE PROCEDURE add_bonus_points(
-    INOUT p_points INT,
-    IN p_bonus INT
-)
+CREATE PROCEDURE add_bonus_points( INOUT p_points INT, IN p_bonus INT )
 BEGIN
     SET p_points = p_points + p_bonus;
 END //
@@ -121,7 +122,6 @@ SELECT @points; -- 600
 -- Variables
 Ex: Calculate whether an order qualifies for free delivery
 DELIMITER //
-
 CREATE PROCEDURE check_free_delivery(IN p_order_amount DECIMAL(10,2))       Parameter
 BEGIN                                                                            |
     DECLARE v_delivery_fee DECIMAL(10,2);                                    Variable
@@ -140,7 +140,8 @@ DELIMITER ;
 
 CALL check_free_delivery(600);
 
--- IF / ELSEIF / ELSE
+-- Conditional stements in MySQL(IF / ELSEIF / ELSE)
+-- syntax
 IF condition THEN
     statements;
 
@@ -152,17 +153,13 @@ ELSE
 END IF;
 
 Example: 
-Example:
-
 DELIMITER //
-
 CREATE PROCEDURE classify_order(IN p_amount DECIMAL(10,2))
 BEGIN
     IF p_amount >= 2000 THEN SELECT 'PREMIUM ORDER' AS order_type;
     ELSEIF p_amount >= 1000 THEN SELECT 'HIGH VALUE ORDER' AS order_type;
     ELSE SELECT 'REGULAR ORDER' AS order_type;
     END IF;
-
 END //
 DELIMITER ;
 
@@ -173,7 +170,6 @@ CALL classify_order(500);
 -- Procedure With Multiple SQL Statements
 Multiple statements that represent one business operation should usually be considered together from a transaction perspective
 DELIMITER //
-
 CREATE PROCEDURE register_customer(
     IN p_name VARCHAR(100),
     IN p_email VARCHAR(150),
@@ -225,15 +221,13 @@ BEGIN
 /* Two customers simultaneously attempt to buy 4 units
 Without proper concurrency control, both transactions could make decisions based on stale availability so will lock the selected rows which stops concurrent operations*/
 
-    IF v_stock IS NULL THEN
-        ROLLBACK;
+    IF v_stock IS NULL THEN ROLLBACK;
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Product not available in this store';
 /* Instead of letting the application receive an obscure database error, we can deliberately raise an application-meaningful error */
 
     ELSEIF v_stock < p_quantity THEN ROLLBACK;
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient inventory';
     ELSE
-
         SELECT price INTO v_price FROM products
         WHERE product_id = p_product_id;
         SET v_total = v_price * p_quantity;
@@ -257,6 +251,7 @@ DELIMITER ;
 CALL place_order(101, 10, 501, 2);
 
 -- Procedure + Loop
+Example: 
 DELIMITER //
 CREATE PROCEDURE generate_numbers()
 BEGIN
