@@ -205,23 +205,15 @@ customers(customer_id)
 
 What constraint would you add to maintain the relationship?
 
-54.
-
-A developer executes:
-
+54. A developer executes:
 DROP TABLE orders;
-
-They intended only to remove today's order records.
-
+They intended only to remove today's order records
 What did they do wrong?
-
 Which command/approach better matches the requirement?
 
-55.
-
-A developer chooses:
+55. A developer chooses:
 mobile_number INT
-for customer phone numbers.
+for customer phone numbers
 Why could this be a poor schema design?
 Give a better choice and explain your reasoning
 
@@ -229,7 +221,6 @@ SECTION F — COMMAND DECISION TEST
 Here you are not given the command. You must identify it
 
 56. A company wants to create a new delivery_partners table
-
 What command?
 
 57. A company wants to add: to an existing orders table
