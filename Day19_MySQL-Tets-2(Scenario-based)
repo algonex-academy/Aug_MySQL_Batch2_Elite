@@ -1,0 +1,120 @@
+SECTION I — SCENARIO-BASED (These questions test whether you can apply what you know)
+
+71. Zepto Customer Table
+You are designing: customers
+
+Business requirements:
+Every customer needs an ID
+Customer name is mandatory
+Email must be unique
+Customer status should default to 'ACTIVE'
+Age cannot be negative
+Registration date should be recorded
+
+Design the table:
+CREATE TABLE customers (
+    ...
+);
+
+You must choose:
+Data types
+Primary key
+Unique constraint
+Not-null constraint
+Default
+Check constraint
+
+72. Product Table
+Design: products
+
+Requirements:
+Product ID
+Product name
+Product price
+Stock quantity
+Category
+Product status
+Created date
+Product metadata in JSON
+
+Business rules:
+price > 0
+stock >= 0
+status has controlled values
+
+Write the CREATE TABLE
+
+73. Orders Table
+Design: orders
+
+Requirements:
+order_id
+customer_id
+store_id
+order_date
+total_amount
+status
+
+Business rules:
+Every order must belong to a customer
+Every order must belong to a store
+Order amount cannot be negative
+Status cannot be missing
+New orders should default to 'PLACED'
+
+Write the complete table definition with appropriate keys and constraints
+74. Diagnose This Schema
+A developer created:
+CREATE TABLE orders (
+    order_id INT,
+    customer_id VARCHAR(100),
+    total_amount FLOAT,
+    status TEXT,
+    order_date VARCHAR(50)
+);
+
+The system is now in production
+Identify at least five design problems
+For each problem:
+Problem
+  |
+Why it is a problem
+  |
+Better data type / constraint
+
+75. Final Architecture Challenge
+You are designing a small Instamart/Zepto-style system
+Your database needs:
+customers
+stores
+products
+inventory
+orders
+order_items
+You don't need to implement the entire database, Just ANSWER THIS
+
+A. Which table should have the primary key?
+B. Where would you use foreign keys?
+C. Where would you use composite keys?
+D. Which columns should probably be NOT NULL?
+E. Where would you use UNIQUE?
+F. Where would you use CHECK?
+
+G. Which columns would use:
+INT / BIGINT
+DECIMAL
+VARCHAR
+DATE
+DATETIME/TIMESTAMP
+JSON
+
+H. Which SQL command would you use when:
+Creating the schema
+Adding a column
+Changing column definition
+Deleting selected rows
+Removing all table rows
+Removing the table
+Saving a transaction
+Undoing a transaction
+
