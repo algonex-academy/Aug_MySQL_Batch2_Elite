@@ -220,96 +220,47 @@ Which command/approach better matches the requirement?
 55.
 
 A developer chooses:
-
 mobile_number INT
-
 for customer phone numbers.
-
 Why could this be a poor schema design?
-
-Give a better choice and explain your reasoning.
+Give a better choice and explain your reasoning
 
 SECTION F — COMMAND DECISION TEST
-5 × 2 = 10 marks
+Here you are not given the command. You must identify it
 
-Here you are not given the command. You must identify it.
-
-56.
-
-A company wants to create a new delivery_partners table.
+56. A company wants to create a new delivery_partners table
 
 What command?
 
-57.
-
-A company wants to add:
-
-to an existing orders table.
-
+57. A company wants to add: to an existing orders table
 What command?
 
-58.
+58. A company wants to rename:
+to: What command?
 
-A company wants to rename:
-
-to:
-
-What command?
-
-59.
-
-A developer inserted incorrect data and the transaction has not yet been committed.
-
+59. A developer inserted incorrect data and the transaction has not yet been committed.
 What command can undo the transaction changes?
 
-60.
-
-Management wants the table to remain available, but all current records must be removed.
-
+60. Management wants the table to remain available, but all current records must be removed
 Which command would you consider?
-
-Explain why you didn't choose DROP.
+Explain why you didn't choose DROP
 
 SECTION G — REAL-TIME DATA TYPE DESIGN
-5 × 2 = 10 marks
+You're designing a quick-commerce application
+Choose an appropriate data type for every field and explain why
 
-You're designing a quick-commerce application.
+61. customer_id
+Requirement: Unique numeric identifier that may grow to very large values.
 
-Choose an appropriate data type for every field and explain why.
+62. product_price
+Requirement: Values such as 49.99, 199.50, 1299.95.
 
-61.
-customer_id
+63. customer_name
+Requirement: Names have different lengths
 
-Requirement:
+64. order_created_at
+Requirement: Store date and time of an order
 
-Unique numeric identifier that may grow to very large values.
-
-62.
-product_price
-
-Requirement:
-
-Values such as 49.99, 199.50, 1299.95.
-
-63.
-customer_name
-
-Requirement:
-
-Names have different lengths.
-
-64.
-order_created_at
-
-Requirement:
-
-Store date and time of an order.
-
-65.
-delivery_location
-
-Requirement:
-
-Store geographic coordinates/location information.
-
+65. delivery_location
+Requirement: Store geographic coordinates/location information
 Which MySQL type/family would you investigate?
