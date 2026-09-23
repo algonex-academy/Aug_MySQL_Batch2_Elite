@@ -255,3 +255,11 @@ Requirement: Store date and time of an order
 65. delivery_location
 Requirement: Store geographic coordinates/location information
 Which MySQL type/family would you investigate?
+
+
+A. I didn't know the concept
+B. I knew the concept but chose the wrong data type
+C. I knew the concept but misunderstood the business requirement
+D. I knew the answer but made a syntax mistake
+E. I got the answer but cannot explain WHY
+
