@@ -311,3 +311,42 @@ C. I knew the concept but misunderstood the business requirement
 D. I knew the answer but made a syntax mistake
 E. I got the answer but cannot explain WHY
 
+65-Question Final Revision Cheat Sheet chuskondii
+INT          -> Normal integers
+BIGINT       -> Very large integers
+DECIMAL      -> Exact numeric / money
+FLOAT/DOUBLE -> Approximate numeric
+CHAR         -> Fixed-length text
+VARCHAR      -> Variable-length text
+TEXT         -> Large text
+BINARY       -> Fixed-length binary
+VARBINARY    -> Variable-length binary
+BLOB         -> Binary data
+DATE         -> Date only
+TIME         -> Time only
+DATETIME     -> Date + time
+TIMESTAMP    -> Date/time with timestamp semantics
+YEAR         -> Year
+JSON         -> JSON documents
+POINT        -> Spatial coordinate
+
+PRIMARY KEY  -> Unique row identity
+FOREIGN KEY  -> Relationship between tables
+UNIQUE       -> Prevent duplicate values
+NOT NULL     -> Prevent NULL
+DEFAULT      -> Automatic default value
+CHECK        -> Enforce condition
+
+CREATE       -> Create object
+ALTER        -> Change structure
+DROP         -> Remove object
+TRUNCATE     -> Remove all rows, keep structure
+RENAME       -> Rename object
+INSERT       -> Add rows
+UPDATE       -> Modify rows
+DELETE       -> Remove rows
+SELECT       -> Read data
+
+COMMIT       -> Save transaction
+ROLLBACK     -> Undo transaction
+SAVEPOINT    -> Create rollback point
