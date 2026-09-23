@@ -1,0 +1,315 @@
+╰┈➤ MySQL Core Concepts( Data Types + Constraints + Keys + SQL Commands)
+𝗥𝘂𝗹𝗲: No notes, no Google, no ChatGPT
+
+Topics covered
+
+↳ ᴅᴀᴛᴀ ᴛʏᴘᴇꜱ: Integer types, DECIMAL, FLOAT, DOUBLE, BIT, CHAR, VARCHAR, TEXT, BLOB, BINARY, VARBINARY, ENUM, SET, DATE, TIME, DATETIME, TIMESTAMP, YEAR, JSON
+↳̲ ̲C̲o̲n̲s̲t̲r̲a̲i̲n̲t̲s̲:̲ PRIMARY KEY, FOREIGN KEY, UNIQUE, NOT NULL, DEFAULT, CHECK
+Keys: Primary, foreign, candidate, alternate, super, composite, unique
+Commands: CREATE, ALTER, DROP, TRUNCATE, RENAME, INSERT, UPDATE, DELETE, SELECT, USE, SHOW, DESCRIBE, GRANT, REVOKE, COMMIT, ROLLBACK, SAVEPOINT
+
+SECTION A — MCQs
+1. You are storing a customer's age
+Which is the most appropriate choice?
+A. VARCHAR(3)
+B. INT
+C. TEXT
+D. DECIMAL(10,2)
+
+2. A grocery product price is: 149.99
+Which data type is generally appropriate for exact monetary values?
+A. FLOAT
+B. DOUBLE
+C. DECIMAL(10,2)
+D. VARCHAR(10)
+
+3. Which is an approximate numeric type?
+A. INT
+B. DECIMAL
+C. DOUBLE
+D. BIGINT
+
+4. Which type is designed for variable-length character strings?
+A. CHAR
+B. VARCHAR
+C. BINARY
+D. BIT
+
+5. Which type stores binary strings rather than normal character strings?
+A. VARCHAR
+B. TEXT
+C. VARBINARY
+D. ENUM
+
+6. You need to store a customer's date of birth: 1999-11-27
+Which type is most appropriate?
+A. YEAR
+B. DATE
+C. DATETIME
+D. TIME
+
+7. You need to store: 2026-09-23 10:30:45
+Which is suitable?
+A. DATE
+B. YEAR
+C. DATETIME
+D. TIME
+
+8. Which type is specifically available for storing JSON documents?
+A. TEXT only
+B. JSON
+C. BLOB only
+D. VARCHAR only
+
+9. Which constraint uniquely identifies each row in a table?
+A. CHECK
+B. FOREIGN KEY
+C. PRIMARY KEY
+D. DEFAULT
+
+10. Which statement is correct?
+A. A table can have unlimited primary keys
+B. A table can have only one primary key
+C. A primary key can contain duplicate values
+D. A primary key can normally contain NULL values
+
+11. What does a foreign key primarily help maintain?
+A. Sorting
+B. Referential integrity
+C. Data formatting
+D. String length
+
+12. Which constraint prevents a column from containing NULL?
+A. UNIQUE
+B. DEFAULT
+C. NOT NULL
+D. CHECK
+
+13. Which constraint is used to enforce a business condition such as: salary > 0
+A. CHECK
+B. DEFAULT
+C. PRIMARY KEY
+D. FOREIGN KEY
+
+14. Which command changes the structure of an existing table?
+A. UPDATE
+B. ALTER
+C. INSERT
+D. SELECT
+
+15. Which command completely removes a table definition?
+A. DELETE
+B. TRUNCATE
+C. DROP
+D. REMOVE
+
+16. Which command removes rows while keeping the table structure?
+A. DROP
+B. TRUNCATE
+C. ALTER
+D. RENAME
+
+17. Which command is used to add new records?
+A. INSERT
+B. UPDATE
+C. ALTER
+D. CREATE
+
+18. Which command changes existing row data?
+A. ALTER
+B. UPDATE
+C. CREATE
+D. RENAME
+
+19. Which command is transaction control?
+A. COMMIT
+B. CREATE
+C. INSERT
+D. ALTER
+
+20. Which of these best represents a composite key?
+A. One column with PRIMARY KEY
+B. Two or more columns together forming a key
+C. A foreign key only
+D. A nullable column with UNIQUE
+
+SECTION B — FILL IN THE BLANKS
+21. The SQL data type used for exact fixed-point numerical values is __________
+22. __________ is generally used when the string length can vary.
+23. A column that uniquely identifies every row can be defined as a __________ key
+24. A key that references a key in another table is called a __________ key
+25. The constraint that prevents NULL values is __________
+26. The constraint that supplies a value automatically when one isn't provided is __________
+27. The command used to add a new column to an existing table is __________
+28. The command used to permanently remove a table and its definition is __________
+29. The command used to permanently save the current transaction is __________
+30. A key consisting of multiple columns is called a __________ key
+
+SECTION C — TRUE OR FALSE
+Write TRUE / FALSE and correct the statement if it is false
+31. DECIMAL is generally preferred over floating-point types when exact decimal values are important.
+32. A table can have multiple primary keys
+33. A foreign key must always be the primary key of the child table
+34. A foreign key can reference a key in another table
+35. DELETE and DROP perform the same operation
+36. TRUNCATE removes the table structure along with the data
+37. VARCHAR and CHAR are identical in how they store character strings
+38. NOT NULL guarantees uniqueness
+39. A CHECK constraint can enforce conditions on column values
+40. COMMIT is used to permanently save transaction changes\
+
+SECTION D — MATCH THE FOLLOWING
+Match Column A with Column B
+ Column A                Column B                    
+ 41. BIGINT      | A. Prevent NULL             
+ 42. DECIMAL     | B. Remove table definition  
+ 43. JSON        | C. Large integer            
+ 44. VARCHAR     | D. Exact decimal number     
+ 45. PRIMARY KEY | E. Variable-length text     
+ 46. FOREIGN KEY | F. JSON document            
+ 47. NOT NULL    | G. Reference another table  
+ 48. ALTER       | H. Modify structure         
+ 49. DROP        | I. Uniquely identify a row  
+ 50. ROLLBACK    | J. Undo transaction changes 
+
+
+SECTION E — IDENTIFY THE PROBLEM(Don't just say wrong - Explain why)
+51. A developer creates:
+CREATE TABLE products (
+    product_id INT,
+    price VARCHAR(20)
+);
+
+The application needs to calculate: price × quantity
+What is the design problem?
+What data type would you choose for price?
+
+52. A developer creates:
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,
+    email VARCHAR(150)
+);
+
+The business requirement says:
+Every customer must have an email and two customers cannot share the same email
+What is missing?
+
+53. A developer creates:
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    customer_id INT
+);
+
+And there is already:
+customers(customer_id)
+
+What constraint would you add to maintain the relationship?
+
+54.
+
+A developer executes:
+
+DROP TABLE orders;
+
+They intended only to remove today's order records.
+
+What did they do wrong?
+
+Which command/approach better matches the requirement?
+
+55.
+
+A developer chooses:
+
+mobile_number INT
+
+for customer phone numbers.
+
+Why could this be a poor schema design?
+
+Give a better choice and explain your reasoning.
+
+🔴 SECTION F — COMMAND DECISION TEST
+5 × 2 = 10 marks
+
+Here you are not given the command. You must identify it.
+
+56.
+
+A company wants to create a new delivery_partners table.
+
+What command?
+
+57.
+
+A company wants to add:
+
+to an existing orders table.
+
+What command?
+
+58.
+
+A company wants to rename:
+
+to:
+
+What command?
+
+59.
+
+A developer inserted incorrect data and the transaction has not yet been committed.
+
+What command can undo the transaction changes?
+
+60.
+
+Management wants the table to remain available, but all current records must be removed.
+
+Which command would you consider?
+
+Explain why you didn't choose DROP.
+
+🔥 SECTION G — REAL-TIME DATA TYPE DESIGN
+5 × 2 = 10 marks
+
+You're designing a quick-commerce application.
+
+Choose an appropriate data type for every field and explain why.
+
+61.
+customer_id
+
+Requirement:
+
+Unique numeric identifier that may grow to very large values.
+
+62.
+product_price
+
+Requirement:
+
+Values such as 49.99, 199.50, 1299.95.
+
+63.
+customer_name
+
+Requirement:
+
+Names have different lengths.
+
+64.
+order_created_at
+
+Requirement:
+
+Store date and time of an order.
+
+65.
+delivery_location
+
+Requirement:
+
+Store geographic coordinates/location information.
+
+Which MySQL type/family would you investigate?
