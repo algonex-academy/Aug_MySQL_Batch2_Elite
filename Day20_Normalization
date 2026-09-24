@@ -12,27 +12,69 @@ Normalization vs Denormalization
 
 Q1. What is normalization?
 Normalization is the process of organizing data into related tables to reduce unnecessary redundancy and prevent insertion, update, and deletion anomalies while maintaining data integrity
-
 Q2. What is 1NF?
 Atomic values and no repeating groups
-
 Q3. What is 2NF?
 1NF plus no partial dependency on part of a composite key
-
 Q4. What is 3NF?
 2NF plus no transitive dependency of non-key attributes on the key
-
 Q5. What is partial dependency?
 When a non-key attribute depends on only part of a composite key
 
 Q6. What is transitive dependency?
 When a non-key attribute depends on another non-key attribute
-
 Q7. Why normalize a database?
 To reduce redundancy, avoid anomalies, and improve data integrity and maintainability
-
 Q8. Does normalization improve performance?
 Not necessarily. It improves structure and consistency, but can introduce more JOINs. Performance depends on the workload and design
-
 Q9. What is denormalization?
 Intentionally introducing selected redundancy to meet performance or access-pattern requirements
+
+Complete Zepto-Style Normalized Database
+Step 1 — Customers(One customer -> One record)
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20) UNIQUE NOT NULL,
+    pincode VARCHAR(10)
+);
+
+Step 2 — Stores (One store -> One record)
+CREATE TABLE stores (
+    store_id INT PRIMARY KEY,
+    store_name VARCHAR(100) NOT NULL,
+    city VARCHAR(100) NOT NULL
+);
+
+Step 3 — Products(One product -> One record)
+CREATE TABLE products (
+    product_id INT PRIMARY KEY,
+    product_name VARCHAR(100) NOT NULL,
+    category VARCHAR(50),
+    price DECIMAL(10,2) NOT NULL
+);
+
+Step 4 — Orders
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    store_id INT NOT NULL,
+    order_date DATETIME NOT NULL,
+    status VARCHAR(30) NOT NULL,
+    total_amount DECIMAL(10,2),
+
+    FOREIGN KEY (customer_id)
+        REFERENCES customers(customer_id),
+
+    FOREIGN KEY (store_id)
+        REFERENCES stores(store_id)
+);
+
+Notice: orders does not store:
+customer_name
+customer_phone
+store_name
+store_city 
+
+-- Because those facts already belong to their respective tables
+
