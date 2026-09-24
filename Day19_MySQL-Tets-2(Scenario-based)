@@ -313,15 +313,54 @@ Identify at least 5 problems
 For each onegive: Problem -> Why -> Better choice
 Don't rewrite the table until you've identified the problems
 
+Problem 1 — product_id VARCHAR(100)
+Issue: If the ID is numeric, this is unnecessarily large and unsuitable for numeric identity.
+Better: product_id BIGINT PRIMARY KEY
+
+Problem 2 — product_name TEXT
+Issue: Product names are usually bounded-length strings
+
+Better: product_name VARCHAR(150) NOT NULL
+
+Problem 3 — price FLOAT
+Issue: FLOAT is approximate and is generally not preferred for exact monetary values.
+Better:  price DECIMAL(10,2)
+
+Problem 4 — stock VARCHAR(20)
+Issue: Stock is numeric, but it's stored as text
+Better: stock INT CHECK (stock >= 0)
+
+Problem 5 — status VARCHAR(100)
+Issue: Arbitrary values can be inserted and the length is unnecessarily large
+
+Better: status VARCHAR(20)
+CHECK (status IN ('ACTIVE', 'INACTIVE', 'DISCONTINUED'))
+Also, the original table has no primary key
+
 79. DELETE vs TRUNCATE vs DROP — Business Decision
 A production table contains: orders
 
 Decide what you would use in each case:
 A. Delete only order 1005
+DELETE FROM orders
+WHERE order_id = 1005;
+
 B. Remove all test records but keep the table structure
+DELETE FROM orders
+WHERE order_id = 1005;
+
 C. Completely remove the orders table because the application no longer uses it
+DELETE FROM orders
+WHERE order_id = 1005;
+
 D. Remove some orders where status = 'CANCELLED'
+DELETE FROM orders
+WHERE status = 'CANCELLED';
+
 For each, give the command and one reason why the other commands are inappropriate
+DELETE   -> selected rows
+TRUNCATE -> all rows
+DROP     -> entire table
 
 80. Final Schema Challenge
 You're designing an Instamart-style order_items table:
@@ -345,3 +384,19 @@ Which columns should be Foreign Keys?
 Which columns need CHECK constraints?
 Which columns should be NOT NULL?
 Write the CREATE TABLE statement
+
+CREATE TABLE order_items (
+    order_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    quantity INT NOT NULL CHECK (quantity > 0),
+    unit_price DECIMAL(10,2) NOT NULL CHECK (unit_price >= 0),
+    discount DECIMAL(10,2) NOT NULL DEFAULT 0
+        CHECK (discount >= 0),
+
+    PRIMARY KEY (order_id, product_id),
+    FOREIGN KEY (order_id)
+        REFERENCES orders(order_id),
+    FOREIGN KEY (product_id)
+        REFERENCES products(product_id)
+);
+
