@@ -8,6 +8,22 @@ Normalization vs Denormalization
  More related tables               | Fewer JOINs in selected use cases       
  Common relational design approach | Used selectively based on requirements  
 
+Normalization vs Denormalization
+Normalization:
+Customer data -> customers
+Product data -> products
+Store data -> stores
+Order data -> orders
+
+Denormalization:
+Sometimes intentionally duplicate/derive data because of:
+performance
+reporting requirements
+historical snapshots
+analytics workloads
+
+So never say in an interview: "Normalization means there should never be duplicate data"
+Say: "Normalization reduces unnecessary redundancy and organizes dependencies appropriately"
 
 
 Q1. What is normalization?
