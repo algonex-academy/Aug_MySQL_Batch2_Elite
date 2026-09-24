@@ -23,6 +23,15 @@ Unique constraint
 Not-null constraint
 Default
 Check constraint
+                                                            Key decisions:
+CREATE TABLE customers (                                    ID -> BIGINT PRIMARY KEY
+    customer_id BIGINT PRIMARY KEY,                         Name -> VARCHAR + NOT NULL
+    customer_name VARCHAR(100) NOT NULL,                    Email -> UNIQUE + NOT NULL
+    email VARCHAR(150) NOT NULL UNIQUE,                     Status -> DEFAULT 'ACTIVE'
+    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',           Age -> CHECK (age >= 0)
+    age INT CHECK (age >= 0),                               Registration date -> DATETIME
+    registration_date DATETIME NOT NULL
+);
 
 72. Product Table
 Design: products
@@ -43,6 +52,19 @@ stock >= 0
 status has controlled values
 
 Write the CREATE TABLE
+CREATE TABLE products (
+    product_id BIGINT PRIMARY KEY,
+    product_name VARCHAR(150) NOT NULL,
+    price DECIMAL(10,2) NOT NULL CHECK (price > 0),
+    stock_quantity INT NOT NULL CHECK (stock_quantity >= 0),
+    category VARCHAR(100) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+    created_at DATETIME NOT NULL,
+    metadata JSON
+);
+
+-- Controlled status can be enforced with:
+CHECK (status IN ('ACTIVE', 'INACTIVE', 'DISCONTINUED'))
 
 73. Orders Table
 Design: orders
@@ -63,6 +85,26 @@ Status cannot be missing
 New orders should default to 'PLACED'
 
 Write the complete table definition with appropriate keys and constraints
+CREATE TABLE orders (
+    order_id BIGINT PRIMARY KEY,
+    customer_id BIGINT NOT NULL,
+    store_id BIGINT NOT NULL,
+    order_date DATETIME NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL CHECK (total_amount >= 0),
+    status VARCHAR(30) NOT NULL DEFAULT 'PLACED',
+
+    FOREIGN KEY (customer_id)
+        REFERENCES customers(customer_id),
+
+    FOREIGN KEY (store_id)
+        REFERENCES stores(store_id)
+);
+
+customer_id -> Foreign Key
+store_id -> Foreign Key
+total_amount -> CHECK >= 0
+status -> NOT NULL + DEFAULT
+
 74. Diagnose This Schema
 A developer created:
 CREATE TABLE orders (
@@ -82,6 +124,30 @@ Why it is a problem
   |
 Better data type / constraint
 
+1. order_id INT
+Problem: No primary key
+Better: BIGINT PRIMARY KEY
+
+2. customer_id VARCHAR(100)
+Problem: Wrong/inefficient representation for numeric ID
+Better: BIGINT + Foreign Ke
+
+3. total_amount FLOAT
+Problem: Approximate numeric type for money
+Better: DECIMAL(10,2)
+
+4. status TEXT
+Problem enti: Allows arbitrary values and is excessive for short status values
+Better: VARCHAR(30) NOT NULL + CHECK
+
+5. order_date VARCHAR(50)
+Problem: Date/time stored as text
+Better: DATETIME
+
+6. Missing constraints
+Problem: No NOT NULL, FK, or business validation
+Better: Add appropriate constraints
+
 75. Final Architecture Challenge
 You are designing a small Instamart/Zepto-style system
 Your database needs:
@@ -93,37 +159,78 @@ orders
 order_items
 You don't need to implement the entire database, Just ANSWER THIS
 
-A. Which table should have the primary key?
+A. Which table should have the primary key? (All six tables should have a primary key)
+customers      -> customer_id
+stores         -> store_id
+products       -> product_id
+inventory      -> (store_id, product_id)
+orders         -> order_id
+order_items    -> (order_id, product_id)
+
 B. Where would you use foreign keys?
+inventory.store_id       -> stores.store_id
+inventory.product_id     -> products.product_id
+
+orders.customer_id       -> customers.customer_id
+orders.store_id          -> stores.store_id
+
+order_items.order_id     -> orders.order_id
+order_items.product_id   -> products.product_id
+
 C. Where would you use composite keys?
+inventory: PRIMARY KEY (store_id, product_id)
+order_items: PRIMARY KEY (order_id, product_id)
+Because the combination uniquely identifies the record
+
 D. Which columns should probably be NOT NULL?
+customer_id
+customer_name
+product_id
+product_name
+price
+store_id
+order_id
+customer_id in orders
+order_date
+status
+quantity
+
 E. Where would you use UNIQUE?
+customers.email
+customers.phone
+
 F. Where would you use CHECK?
+price > 0
+stock_quantity >= 0
+quantity > 0
+total_amount >= 0
+status IN ('PLACED','PACKED','DELIVERED','CANCELLED')
 
 G. Which columns would use:
-INT / BIGINT
-DECIMAL
-VARCHAR
-DATE
-DATETIME/TIMESTAMP
-JSON
+INT / BIGINT -> IDs
+DECIMAL  ->Money/price
+VARCHAR   -> Names/categories/status
+DATE     -> Date only
+DATETIME/TIMESTAMP  -> Date + time
+JSON  -> Flexible structured metadata
 
-H. Which SQL command would you use when:
-Creating the schema
-Adding a column
-Changing column definition
-Deleting selected rows
-Removing all table rows
-Removing the table
-Saving a transaction
-Undoing a transaction
 
  IDs                          | INT / BIGINT         
  Money/price                  | DECIMAL(10,2)          
  Names/categories/status      | VARCHAR                
  Date only                    | DATE                   
  Date + time                  | DATETIME / TIMESTAMP 
- Flexible structured metadata | JSON                   
+ Flexible structured metadata | JSON   
+
+H. Which SQL command would you use when:
+Creating the schema -> CREATE DATABASE
+Adding a column  -> ALTER TABLE ... ADD COLUMN
+Changing column definition   ->  ALTER TABLE ... MODIFY/CHANGE
+Deleting selected rows  ->  DELETE ... WHERE
+Removing all table rows ->  TRUNCATE TABLE
+Removing the table   ->   DROP TABLE
+Saving a transaction ->   COMMIT
+Undoing a transaction -> ROLLBACK                
 
  Requirement                  Command                         
  Create schema/database   | CREATE DATABASE               
@@ -160,11 +267,25 @@ Age cannot be negative
 Creation time should be automatically recorded
 Task: Choose the data type and appropriate constraint for each column and explain why
 
+CREATE TABLE users (
+    user_id BIGINT PRIMARY KEY,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    phone VARCHAR(20) UNIQUE,
+    age INT CHECK (age >= 0),
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+user_id -> BIGINT PRIMARY KEY → unique identity.
+email -> VARCHAR, NOT NULL, UNIQUE → mandatory and no duplicates.
+phone -> VARCHAR, UNIQUE → phone numbers may contain +, country codes, etc.; optional because no NOT NULL.
+age -> INT + CHECK → whole number and cannot be negative.
+created_at -> DATETIME + DEFAULT → automatically records creation time
+
 77. Primary Key vs UNIQUE — Real Scenario cheyandi
 employees Table:
-employee_id
-email
-company_id
+employee_id -> Primary key
+email   -> Unique
+company_id  -> 
 
 Business rules:
 employee_id uniquely identifies an employee
