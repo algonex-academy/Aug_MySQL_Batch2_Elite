@@ -118,3 +118,109 @@ Removing the table
 Saving a transaction
 Undoing a transaction
 
+ IDs                          | INT / BIGINT         
+ Money/price                  | DECIMAL(10,2)          
+ Names/categories/status      | VARCHAR                
+ Date only                    | DATE                   
+ Date + time                  | DATETIME / TIMESTAMP 
+ Flexible structured metadata | JSON                   
+
+ Requirement                  Command                         
+ Create schema/database   | CREATE DATABASE               
+ Create table             | CREATE TABLE                  
+ Add column               | ALTER TABLE ... ADD COLUMN    
+ Change column definition | ALTER TABLE ... MODIFY/CHANGE 
+ Delete selected rows     | DELETE ... WHERE              
+ Remove all rows          | TRUNCATE TABLE                
+ Remove table             | DROP TABLE                    
+ Save transaction         | COMMIT                        
+ Undo transaction         | ROLLBACK                      
+
+PRIMARY KEY  -> Who is this row?
+FOREIGN KEY  -> Which other row is it related to?
+UNIQUE       -> No duplicates
+NOT NULL     -> Mandatory
+CHECK        -> Business rule
+DEFAULT      -> Automatic value
+DECIMAL      -> Exact money
+DATETIME     -> Date + time
+JSON         -> Structured flexible data
+
+76. Data Type + Constraint Trap
+You are designing a users table: user_id
+                                email
+                                phone
+                                age
+                                created_at
+Requirements:
+user_id must uniquely identify a user
+Email cannot be duplicated or NULL
+Phone is optional but, when provided, must be unique
+Age cannot be negative
+Creation time should be automatically recorded
+Task: Choose the data type and appropriate constraint for each column and explain why
+
+77. Primary Key vs UNIQUE — Real Scenario cheyandi
+employees Table:
+employee_id
+email
+company_id
+
+Business rules:
+employee_id uniquely identifies an employee
+The same email cannot be used twice
+An employee belongs to one company
+Multiple employees can work for the same company
+
+Task:
+Which column should be the Primary Key?
+Which should have UNIQUE?
+Which should become a Foreign Key if a companies table exists?
+Why shouldn't company_id be the Primary Key?
+
+78. Diagnose the Design
+A developer creates:
+CREATE TABLE products (
+    product_id VARCHAR(100),
+    product_name TEXT,
+    price FLOAT,
+    stock VARCHAR(20),
+    status VARCHAR(100)
+);
+
+Identify at least 5 problems
+For each onegive: Problem -> Why -> Better choice
+Don't rewrite the table until you've identified the problems
+
+79. DELETE vs TRUNCATE vs DROP — Business Decision
+A production table contains: orders
+
+Decide what you would use in each case:
+A. Delete only order 1005
+B. Remove all test records but keep the table structure
+C. Completely remove the orders table because the application no longer uses it
+D. Remove some orders where status = 'CANCELLED'
+For each, give the command and one reason why the other commands are inappropriate
+
+80. Final Schema Challenge
+You're designing an Instamart-style order_items table:
+order_id
+product_id
+quantity
+unit_price
+discount
+
+Requirements:
+One order can contain many products
+A product can appear in many different orders
+Quantity must be greater than 0
+Unit price cannot be negative
+Discount cannot be negative
+The same product should not appear twice within the same order
+
+Task:
+What should the Primary Key be?
+Which columns should be Foreign Keys?
+Which columns need CHECK constraints?
+Which columns should be NOT NULL?
+Write the CREATE TABLE statement
