@@ -78,3 +78,87 @@ store_city
 
 -- Because those facts already belong to their respective tables
 
+Order Items: An order can contain multiple products
+Example: Order 1001
+           ├── Milk
+           ├── Bread
+           └── Eggs
+CREATE TABLE order_items (
+    order_id INT,
+    product_id INT,
+    quantity INT NOT NULL,
+    PRIMARY KEY (order_id, product_id),
+
+    FOREIGN KEY (order_id)
+        REFERENCES orders(order_id),
+    FOREIGN KEY (product_id)
+        REFERENCES products(product_id)
+); -- Which products are present in which order?
+
+Inventory Table:For a quick-commerce application, stock belongs to a particular store
+CREATE TABLE inventory (
+    store_id INT,
+    product_id INT,
+    quantity INT NOT NULL,
+    PRIMARY KEY (store_id, product_id),
+    FOREIGN KEY (store_id)
+        REFERENCES stores(store_id),
+    FOREIGN KEY (product_id)
+        REFERENCES products(product_id)
+);
+
+Why composite key?
+Because: store_id + product_id uniquely identifies the inventory record
+
+--- Now Look at the Final Design
+customers Table
+customer_id PK
+customer_name
+phone
+pincode
+        |
+        ↓
+orders Table
+order_id PK
+customer_id FK
+store_id FK
+order_date
+status
+total_amount
+        |
+        ↓
+order_items Table
+order_id PK/FK
+product_id PK/FK
+quantity
+        |
+        |
+products Table 
+product_id PK
+product_name
+category
+price
+
+stores Table
+store_id PK
+store_name
+city
+        |
+inventory
+store_id PK/FK
+product_id PK/FK
+quantity
+
+For exampleki: Find customer name, order ID, product name and quantity
+SELECT
+    c.customer_name,
+    o.order_id,                                    Normalization
+    p.product_name,                                    |
+    oi.quantity                                    Separate logical tables
+FROM customers c                                       | 
+JOIN orders o                                      Prmary Keys / Foreign Keys
+    ON c.customer_id = o.customer_id                    |
+JOIN order_items oi                                   JOINs
+    ON o.order_id = oi.order_id                         | 
+JOIN products p                                     Business queries
+    ON oi.product_id = p.product_id;
