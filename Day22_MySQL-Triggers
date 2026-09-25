@@ -1,7 +1,7 @@
 MySQL Triggers
 
-A trigger is automatic SQL logic that MySQL executes when a specific INSERT, UPDATE, or DELETE event happens on a table
-You do not call a trigger manually. The table event causes it to run automatically
+A trigger is automatic SQL logic/an event that MySQL executes Before/After, when a specific INSERT, UPDATE, or DELETE event happens on a table
+You do not call a trigger manually - The table event causes it to run automatically
 -> MySQL triggers are row-level: they execute once for each affected row
 
 Application
@@ -22,15 +22,17 @@ orders
 inventory
 order_audit
 
-A customer places an order
+-- A customer places an order
 Your application executes: INSERT INTO orders (...);
 But the business also wants: an audit record
                             inventory adjustment
                             automatic timestamp
                             validation
                             status tracking
-Instead of trusting every application developer to remember those extra operations, some of this logic can be enforced at the database layer with triggers
-For exampleki:
+Instead of trusting every application developer to remember those extra operations, 
+some of this logic can be enforced at the database layer with triggers
+
+Trigger example:
 New order inserted
         |
 AFTER INSERT trigger
@@ -38,9 +40,8 @@ AFTER INSERT trigger
 Create audit record
 
 2. Trigger vs Stored Procedure
-Students confuse these constantly
 
-Stored Procedure
+-- Stored Procedure
 You explicitly run: CALL place_order(...);
 
 -- Trigger
@@ -69,7 +70,7 @@ INSERT
 UPDATE
 DELETE
 
-So you can have:
+-- So you can have:
 BEFORE INSERT
 AFTER INSERT
 
@@ -102,16 +103,8 @@ CREATE TRIGGER after_order_insert
 AFTER INSERT ON orders
 FOR EACH ROW
 BEGIN
-    INSERT INTO order_audit (
-        order_id,
-        action_type,
-        action_time
-    )
-    VALUES (
-        NEW.order_id,
-        'ORDER_CREATED',
-        CURRENT_TIMESTAMP
-    );
+    INSERT INTO order_audit (order_id, action_type,action_time)
+    VALUES (NEW.order_id,'ORDER_CREATED',CURRENT_TIMESTAMP);
 END //
 DELIMITER ;
 
@@ -119,7 +112,7 @@ DELIMITER ;
 INSERT INTO orders (order_id, customer_id, total_amount, status)
 VALUES (1001, 101, 599.00, 'PLACED');
 
-the trigger automatically executes: INSERT INTO order_audit ... You don't run it manually
+the trigger automatically executes: INSERT INTO order_audit ... which You don't run it manually
 
 -- NEW and OLD — The Most Important Concept
 NEW: Represents the new row values.
