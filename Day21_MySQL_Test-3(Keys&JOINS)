@@ -10,43 +10,43 @@ SECTION A — MCQs
 A. Foreign Key
 B. Primary Key
 C. Alternate Key
-D. Super Key
+D. Super Key -- B
 
 2. Which statement about a primary key is correct?
 A. A table can have multiple primary key constraints
 B. Primary key values can be duplicated
 C. Primary key uniquely identifies rows
-D. Primary key is always a foreign key
+D. Primary key is always a foreign key -- C
 
 3. Which key establishes a relationship between two tables?
 A. Candidate Key
 B. Foreign Key
 C. Alternate Key
-D. Composite Key
+D. Composite Key -- B
 
 4. Which is an example of a composite key?
 A. customer_id
 B. email
 C. (order_id, product_id)
-D. phone
+D. phone  -- C (Two columns together uniquely identify the row)
 
 5. A candidate key that is not selected as the primary key is called:
 A. Foreign Key
 B. Alternate Key
 C. Super Key
-D. Composite Key
+D. Composite Key -- B
 
 6. Which JOIN returns only matching records from both tables?
 A. LEFT JOIN
 B. RIGHT JOIN
 C. INNER JOIN
-D. CROSS JOIN
+D. CROSS JOIN -- C
 
 7. Which JOIN returns all rows from the left table and matching rows from the right table?
 A. INNER JOIN
 B. LEFT JOIN
 C. RIGHT JOIN
-D. CROSS JOIN
+D. CROSS JOIN -- D(Every row combines with every other row)
 
 8. What does a CROSS JOIN produce?
 A. Only matching rows
@@ -59,29 +59,31 @@ D. Duplicate elimination
 A. INNER JOIN
 B. LEFT JOIN
 C. CROSS JOIN
-D. SELF JOIN
+D. SELF JOIN -- B (Keeps all customers, even without orders)
 
 10. MySQL does not provide a direct:
 A. INNER JOIN
 B. LEFT JOIN
 C. RIGHT JOIN
-D. FULL OUTER JOIN
+D. FULL OUTER JOIN -- D (MySQL has no direct FULL OUTER JOIN)
 
 SECTION B — TRUE / FALSE
-11. A table can have only one primary key constraint
-12. A foreign key must always be unique
-13. A composite key consists of two or more columns
-14. INNER JOIN can return unmatched rows from the left table
-15. LEFT JOIN can return NULL values for columns from the right table when no match exists
+11. A table can have only one primary key constraint -- True
+12. A foreign key must always be unique -- False
+13. A composite key consists of two or more columns  -- True
+14. INNER JOIN can return unmatched rows from the left table -- False
+15. LEFT JOIN can return NULL values for columns from the right table when no match exists -- True
 
 SECTION C — IDENTIFY THE KEY
 Consider: customers Table
-customer_id
-email
-phone
-name
+customer_id -> Primary Key
+If it uniquely identifies every customer and is selected as PK
+email -> Candidate Key
+phone -> Alternate Key
 
 16. If customer_id uniquely identifies every customer, what type of key is it?
+If it uniquely identifies every customer and is selected as PK
+
 17. If email is also guaranteed to be unique and can identify a customer, what kind of key is email before choosing the primary key?
 18. If customer_id is selected as the Primary Key and email remains unique, what would email be called?
 
@@ -90,16 +92,18 @@ order_id
 product_id
 quantity
 If (order_id, product_id) uniquely identifies each row, what type of key is this?
+Two columns together uniquely identify the record
 
-20. If orders.customer_id references customers.customer_id, what type of key is orders.customer_id?
+20. If orders.customer_id references customers.customer_id, what type of key is orders.customer_id? -> Foreign Key
+It references customers.customer_id
 
 SECTION D — MATCH THE FOLLOWING
  Column A           Column B                            
- 21. Primary Key   | A. All combinations of rows         
- 22. Foreign Key   | B. Uniquely identifies a row        
- 23. Candidate Key | C. References another table         
- 24. Alternate Key | D. Possible key candidate           
- 25. CROSS JOIN    | E. Candidate key not selected as PK 
+ 21. Primary Key   B | A. All combinations of rows         
+ 22. Foreign Key   C | B. Uniquely identifies a row        
+ 23. Candidate Key D | C. References another table         
+ 24. Alternate Key E | D. Possible key candidate           
+ 25. CROSS JOIN    A | E. Candidate key not selected as PK 
 
 SECTION E — JOIN QUERY PRACTICE
 Use these tables:
@@ -121,10 +125,16 @@ store_name
 city
 
 26. INNER JOIN
-Display:
-customer_name
-order_id
-total_amount for customers who have placed orders - Write the query
+Display: customer_name 
+         order_id
+         total_amount for customers who have placed orders - Write the query
+SELECT
+    c.customer_name,
+    o.order_id,
+    o.total_amount
+FROM customers c
+INNER JOIN orders o
+    ON c.customer_id = o.customer_id; -- Why? We only need customers who have matching orders
 
 27. LEFT JOIN
 Display all customers, including customers who have never placed an order
@@ -133,23 +143,57 @@ customer_name
 order_id
 total_amount
 
+SELECT
+    c.customer_name,
+    o.order_id,
+    o.total_amount
+FROM customers c
+LEFT JOIN orders o
+    ON c.customer_id = o.customer_id; -- Why? We need all customers, including those without orders
+
 28. Multi-table JOIN
 Display:
 customer_name
 order_id
 store_name
-total_amount
-Use the required JOINs
+total_amount -- Use the required JOINs
+
+SELECT
+    c.customer_name,
+    o.order_id,
+    s.store_name,
+    o.total_amount
+FROM customers c
+INNER JOIN orders o
+    ON c.customer_id = o.customer_id
+INNER JOIN stores s
+    ON o.store_id = s.store_id;
 
 29. Filter After JOIN
 Display customers and their orders where:
 total_amount > 1000
 
+SELECT
+    c.customer_name,
+    o.order_id,
+    o.total_amount
+FROM customers c
+INNER JOIN orders o
+    ON c.customer_id = o.customer_id
+WHERE o.total_amount > 1000;
+
 30. Unmatched Records
 Find customers who have never placed an order
-Return:
-customer_id
-customer_name
+Return: customer_id
+        customer_name
+
+SELECT
+    c.customer_id,
+    c.customer_name
+FROM customers c
+LEFT JOIN orders o
+    ON c.customer_id = o.customer_id
+WHERE o.customer_id IS NULL;
 
 SECTION F — LOGICAL JOIN QUESTIONS
 31. What is the difference between:
