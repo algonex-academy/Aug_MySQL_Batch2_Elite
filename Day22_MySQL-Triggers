@@ -1,0 +1,152 @@
+MySQL Triggers
+
+A trigger is automatic SQL logic that MySQL executes when a specific INSERT, UPDATE, or DELETE event happens on a table
+You do not call a trigger manually. The table event causes it to run automatically
+-> MySQL triggers are row-level: they execute once for each affected row
+
+Application
+    |
+INSERT / UPDATE / DELETE
+    |
+Table changes
+    |
+TRIGGER automatically fires
+    |
+Extra database action
+
+1. Real-Life Example First
+Imagine a Zepto/Instamart-style system
+
+You have:
+orders
+inventory
+order_audit
+
+A customer places an order
+Your application executes: INSERT INTO orders (...);
+But the business also wants: an audit record
+                            inventory adjustment
+                            automatic timestamp
+                            validation
+                            status tracking
+Instead of trusting every application developer to remember those extra operations, some of this logic can be enforced at the database layer with triggers
+For exampleki:
+New order inserted
+        |
+AFTER INSERT trigger
+        |
+Create audit record
+
+2. Trigger vs Stored Procedure
+Students confuse these constantly
+
+Stored Procedure
+You explicitly run: CALL place_order(...);
+
+-- Trigger
+You run: INSERT INTO orders (...);
+and MySQL automatically fires the trigger
+
+Procedure = You call it
+Trigger = An event causes it to run
+
+-- Standard Trigger Syntax
+CREATE TRIGGER trigger_name
+BEFORE | AFTER
+INSERT | UPDATE | DELETE
+ON table_name
+FOR EACH ROW
+trigger_body;
+--> MySQL supports BEFORE and AFTER timing with INSERT, UPDATE, and DELETE, and every MySQL trigger is FOR EACH ROW
+
+####Understand the Six Combinations(2 Ques anthee)
+1. When?
+BEFORE
+AFTER
+
+2. What event?
+INSERT
+UPDATE
+DELETE
+
+So you can have:
+BEFORE INSERT
+AFTER INSERT
+
+BEFORE UPDATE
+AFTER UPDATE
+
+BEFORE DELETE
+AFTER DELETE
+
+-- First Simple Trigger — Audit Orders
+CREATE TABLE orders (
+    order_id BIGINT PRIMARY KEY,
+    customer_id BIGINT,
+    total_amount DECIMAL(10,2),
+    status VARCHAR(30)
+);
+
+-- Inko audit table
+CREATE TABLE order_audit (
+    audit_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT,
+    action_type VARCHAR(30),
+    action_time DATETIME
+);
+
+-- Now let's create a Trigger
+DELIMITER //
+
+CREATE TRIGGER after_order_insert
+AFTER INSERT ON orders
+FOR EACH ROW
+BEGIN
+    INSERT INTO order_audit (
+        order_id,
+        action_type,
+        action_time
+    )
+    VALUES (
+        NEW.order_id,
+        'ORDER_CREATED',
+        CURRENT_TIMESTAMP
+    );
+END //
+DELIMITER ;
+
+-- Ee Insert cheyagaane Trigger apply avuthundii
+INSERT INTO orders (order_id, customer_id, total_amount, status)
+VALUES (1001, 101, 599.00, 'PLACED');
+
+the trigger automatically executes: INSERT INTO order_audit ... You don't run it manually
+
+-- NEW and OLD — The Most Important Concept
+NEW: Represents the new row values.
+
+Used with:
+INSERT
+UPDATE
+
+Example:
+NEW.total_amount
+NEW.status
+NEW.order_id
+
+OLD: Represents the previous row values.
+Used with:
+UPDATE
+DELETE
+
+Example:
+OLD.total_amount
+OLD.status
+OLD.order_id
+
+-> MySQL defines OLD as the existing value before an update/delete and NEW as the incoming/new value for insert/update
+
+ Event   OLD       NEW 
+ INSERT | No     |  Yes     
+ UPDATE | Yes     | Yes     
+ DELETE | Yes     | No     
+
