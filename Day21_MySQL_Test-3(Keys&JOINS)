@@ -84,8 +84,8 @@ name
 16. If customer_id uniquely identifies every customer, what type of key is it?
 17. If email is also guaranteed to be unique and can identify a customer, what kind of key is email before choosing the primary key?
 18. If customer_id is selected as the Primary Key and email remains unique, what would email be called?
-19.
-Consider: order_items
+
+19. Consider: order_items
 order_id
 product_id
 quantity
@@ -94,7 +94,7 @@ If (order_id, product_id) uniquely identifies each row, what type of key is this
 20. If orders.customer_id references customers.customer_id, what type of key is orders.customer_id?
 
 SECTION D — MATCH THE FOLLOWING
- Column A          | Column B                            
+ Column A           Column B                            
  21. Primary Key   | A. All combinations of rows         
  22. Foreign Key   | B. Uniquely identifies a row        
  23. Candidate Key | C. References another table         
@@ -103,19 +103,19 @@ SECTION D — MATCH THE FOLLOWING
 
 SECTION E — JOIN QUERY PRACTICE
 Use these tables:
-customers
+customers Table
 customer_id
 customer_name
 city
 
-orders
+orders Table
 order_id
 customer_id
 store_id
 total_amount
 status
 
-stores
+stores Table
 store_id
 store_name
 city
@@ -128,19 +128,17 @@ total_amount for customers who have placed orders - Write the query
 
 27. LEFT JOIN
 Display all customers, including customers who have never placed an order
-
 Return:
 customer_name
 order_id
 total_amount
-28. Multi-table JOIN
 
+28. Multi-table JOIN
 Display:
 customer_name
 order_id
 store_name
 total_amount
-
 Use the required JOINs
 
 29. Filter After JOIN
@@ -149,7 +147,7 @@ total_amount > 1000
 
 30. Unmatched Records
 Find customers who have never placed an order
-
 Return:
 customer_id
 customer_name
+
