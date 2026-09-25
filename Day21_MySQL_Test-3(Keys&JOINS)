@@ -151,3 +151,127 @@ Return:
 customer_id
 customer_name
 
+SECTION F — LOGICAL JOIN QUESTIONS
+31. What is the difference between:
+INNER JOIN
+and: LEFT JOIN
+Give a real-world example
+
+32. Suppose:
+customers = 5 rows
+orders = 10 rows
+Some customers have no orders
+
+If you use:
+FROM customers c
+INNER JOIN orders o
+    ON c.customer_id = o.customer_id;
+Will the result contain all 5 customers? - Explain
+
+33. A developer writes:
+SELECT *
+FROM customers c
+JOIN orders o;
+
+What is wrong with this query?
+What type of result could occur if the database accepts the equivalent Cartesian operation?
+
+34. You need: "Show every store, even stores that currently have no orders"
+Which table should be on the left side of the JOIN?
+Which JOIN would you use?
+Explain why
+
+35. You need: "Show only customers who have placed at least one order"
+Would you use:
+INNER JOIN
+or LEFT JOIN
+Why?
+
+SECTION G — REAL-TIME SCENARIO TEST
+36. Zepto Customer + Order
+Requirement: Operations wants customer name, order ID, status and amount for every existing order
+
+Tables:
+customers(customer_id, customer_name)
+orders(order_id, customer_id, status, total_amount)
+Write the query and explain why you selected that JOIN
+
+37. Customers With No Orders
+Requirement: Marketing wants customers who registered but have never ordered anything
+Write the query
+Also explain: Why wouldn't INNER JOIN work?
+
+38. Store Performance
+Tables: stores(store_id, store_name)
+orders(order_id, store_id, total_amount, status)
+
+Requirement: Management wants all stores, including stores with zero orders, along with their orders
+Write the query
+
+39. Three-Level Relationship
+customers Table
+customer_id
+customer_name
+
+orders Table
+order_id
+customer_id
+
+order_items Table
+order_id
+product_id
+quantity
+
+products Table
+product_id
+product_name
+price
+
+Requirement: "Show customer name, order ID, product name and quantity "
+Write the complete query
+
+SECTION H — FINAL ARCHITECTURE CHALLENGE
+40. Design + JOIN Thinking
+You are building a Zepto-style database:
+customers
+stores
+products
+inventory
+orders
+order_items
+
+A. What should be the Primary Key of each table?
+B. Where would you use Foreign Keys?
+C. Where would you use Composite Keys?
+D. Why would order_items typically need (order_id, product_id) as a composite key?
+E. Write a query to show:
+customer_name
+order_id
+store_name
+product_name
+quantity
+F. Write a query to find customers who have never ordered
+G. Write a query to find stores with no orders
+H. Which JOIN would you choose for each of F and G?
+I. Explain the difference between:
+INNER JOIN
+LEFT JOIN
+RIGHT JOIN
+CROSS JOIN
+SELF JOIN in one sentence each
+
+
+-- BONUS — ORAL INTERVIEW ROUNDloo aduguthaaru
+1. What is the difference between a candidate key and a primary key?
+2. Can a foreign key have duplicate values? Why?
+3. Can a foreign key contain NULL?
+4. Why do we use a composite key in order_items?
+5. What happens to unmatched records in INNER JOIN?
+6. What happens to unmatched right-table columns in LEFT JOIN?
+7. How can you find records in Table A that don't exist in Table B?
+8. Why can a JOIN produce more rows than either individual table?
+9. What happens if the JOIN condition is missing or incorrect?
+10. When would you use a SELF JOIN?
+
+-- Ilaa explain cheydaaniki try cheyandii
+"I need every record from this table even when no matching record exists in the other table, so I keep that table on the left and use LEFT JOIN
