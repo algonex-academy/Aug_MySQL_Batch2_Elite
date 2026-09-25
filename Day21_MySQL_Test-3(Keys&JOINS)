@@ -1,0 +1,68 @@
+MySQL EXAM — KEYS & JOINS
+Topic Coverage
+Keys: Primary Key, Foreign Key, Candidate Key, Alternate Key, Super Key, Composite Key, Unique Key, Natural vs Surrogate Key
+Joins: INNER, LEFT, RIGHT, CROSS, SELF, multi-table JOINs, JOIN conditions, unmatched records, practical scenarios
+
+Exam rule: Don't memorize JOIN syntax. For every JOIN question, first identify what data you need, from which tables, and what should happen to unmatched rows
+
+SECTION A — MCQs
+1. Which key uniquely identifies each row in a table?
+A. Foreign Key
+B. Primary Key
+C. Alternate Key
+D. Super Key
+
+2. Which statement about a primary key is correct?
+A. A table can have multiple primary key constraints
+B. Primary key values can be duplicated
+C. Primary key uniquely identifies rows
+D. Primary key is always a foreign key
+
+3. Which key establishes a relationship between two tables?
+A. Candidate Key
+B. Foreign Key
+C. Alternate Key
+D. Composite Key
+
+4. Which is an example of a composite key?
+A. customer_id
+B. email
+C. (order_id, product_id)
+D. phone
+
+5. A candidate key that is not selected as the primary key is called:
+A. Foreign Key
+B. Alternate Key
+C. Super Key
+D. Composite Key
+
+6. Which JOIN returns only matching records from both tables?
+A. LEFT JOIN
+B. RIGHT JOIN
+C. INNER JOIN
+D. CROSS JOIN
+
+7. Which JOIN returns all rows from the left table and matching rows from the right table?
+A. INNER JOIN
+B. LEFT JOIN
+C. RIGHT JOIN
+D. CROSS JOIN
+
+8. What does a CROSS JOIN produce?
+A. Only matching rows
+B. Only unmatched rows
+C. Cartesian product
+D. Duplicate elimination
+
+9. Which JOIN is useful when you want:
+"All customers, including customers who have never placed an order"
+A. INNER JOIN
+B. LEFT JOIN
+C. CROSS JOIN
+D. SELF JOIN
+
+10. MySQL does not provide a direct:
+A. INNER JOIN
+B. LEFT JOIN
+C. RIGHT JOIN
+D. FULL OUTER JOIN
