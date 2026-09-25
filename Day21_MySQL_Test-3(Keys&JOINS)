@@ -66,3 +66,90 @@ A. INNER JOIN
 B. LEFT JOIN
 C. RIGHT JOIN
 D. FULL OUTER JOIN
+
+SECTION B — TRUE / FALSE
+11. A table can have only one primary key constraint
+12. A foreign key must always be unique
+13. A composite key consists of two or more columns
+14. INNER JOIN can return unmatched rows from the left table
+15. LEFT JOIN can return NULL values for columns from the right table when no match exists
+
+SECTION C — IDENTIFY THE KEY
+Consider: customers Table
+customer_id
+email
+phone
+name
+
+16. If customer_id uniquely identifies every customer, what type of key is it?
+17. If email is also guaranteed to be unique and can identify a customer, what kind of key is email before choosing the primary key?
+18. If customer_id is selected as the Primary Key and email remains unique, what would email be called?
+19.
+Consider: order_items
+order_id
+product_id
+quantity
+If (order_id, product_id) uniquely identifies each row, what type of key is this?
+
+20. If orders.customer_id references customers.customer_id, what type of key is orders.customer_id?
+
+SECTION D — MATCH THE FOLLOWING
+ Column A          | Column B                            
+ 21. Primary Key   | A. All combinations of rows         
+ 22. Foreign Key   | B. Uniquely identifies a row        
+ 23. Candidate Key | C. References another table         
+ 24. Alternate Key | D. Possible key candidate           
+ 25. CROSS JOIN    | E. Candidate key not selected as PK 
+
+SECTION E — JOIN QUERY PRACTICE
+Use these tables:
+customers
+customer_id
+customer_name
+city
+
+orders
+order_id
+customer_id
+store_id
+total_amount
+status
+
+stores
+store_id
+store_name
+city
+
+26. INNER JOIN
+Display:
+customer_name
+order_id
+total_amount for customers who have placed orders - Write the query
+
+27. LEFT JOIN
+Display all customers, including customers who have never placed an order
+
+Return:
+customer_name
+order_id
+total_amount
+28. Multi-table JOIN
+
+Display:
+customer_name
+order_id
+store_name
+total_amount
+
+Use the required JOINs
+
+29. Filter After JOIN
+Display customers and their orders where:
+total_amount > 1000
+
+30. Unmatched Records
+Find customers who have never placed an order
+
+Return:
+customer_id
+customer_name
