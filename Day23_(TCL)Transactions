@@ -9,22 +9,22 @@ An order operation may involve several database changes:
 3. Reduce inventory
 4. Record payment
 5. Update coupon usage
--- Ivi These aren't really five independent business operations
+-- These aren't really five independent business operations
 From the customer's perspective: Either the complete order succeeds, or the complete order fails
 That is exactly where a 𝕋𝕣𝕒𝕟𝕤𝕒𝕔𝕥𝕚𝕠𝕟𝕤 comes in OKKK
 
 -> A transaction is a group of database operations treated as one logical unit of work
-=> A transaction is a sequence of one or more database operations executed as a single logical unit, where changes can be committed if successful or rolled back if the operation fails
+=> A transaction is a sequence/group of one or more DB operations executed as a single logical unit, 
+where changes can be committed if every operation successful or rolled back if the operation fails
 
-ALL operations succeed             Something fails
-        |                                 |
-      COMMIT                           ROLLBACK
+ALL operations succeed             Something fails          Checkpoint(Savepoint) ROLLBACK
+        |                                 |                        | 
+      COMMIT;                           ROLLBACK;              ROLLBACK to savepoint;
 
 -- MySQL Syntax
 START TRANSACTION;
 -- SQL statements
 COMMIT;
-
 If something goes wrong:
 START TRANSACTION;
 -- SQL statements
@@ -70,34 +70,30 @@ WHERE account_id = 101;                                  |
 UPDATE accounts                                          |
 SET balance = balance + 2000                  Everything successful?
 WHERE account_id = 102;                                  |
-                                                    COOMIT
+                                                      COMMIT
 COMMIT;                                -- Now both changes are treated as part of one transaction
 
 
-COMMIT; -- Make the transaction's changes permanent (Confirm / Save)
+-> COMMIT; -- Make the transaction's changes permanent (Confirm / Save)
 eXAMPLE:
 START TRANSACTION;
-
 UPDATE accounts
 SET balance = balance - 2000
 WHERE account_id = 101;
+COMMIT; -- Once committed, you don't use a normal ROLLBACK afterward to undo on that completed transaction
 
-COMMIT; -- Once committed, you don't use a normal ROLLBACK afterward to undo that completed transaction
-
-ROLLBACK?: Undo changes made during the current transaction since its beginning or relevant savepoin(Cancel /Undo)
-Esxample: START TRANSACTION;
-
+-> ROLLBACK?: Undo changes made during the current transaction since its beginning or relevant savepoint(Cancel /Undo)
+Example: START TRANSACTION;
 UPDATE accounts
 SET balance = balance - 2000
 WHERE account_id = 101;
-
 SELECT * FROM accounts;
 
  ROLLBACK;
 SELECT * FROM accounts;
 
 -- Zepto Real-Time Transaction chedhaama
-Kaveru Customer places an order for:
+Kaveri Customer places an order for:
 Milk     × 2
 Bread    × 1
 Eggs     × 1
@@ -168,13 +164,13 @@ VALUES (...);
 ROLLBACK TO SAVEPOINT payment_done;
 COMMIT;
 
--- Overallga chudandii
-START TRANSACTION; -- Start transaction
-COMMIT; -- Make changes permanent
-ROLLBACK; -- Undo the current transaction's uncommitted changes
-SAVEPOINT sp1; -- Create a point inside the transaction
-ROLLBACK TO SAVEPOINT sp1; -- Return to that point
-RELEASE SAVEPOINT sp1; -- Remove the savepoint
+-- Overallga chudandii                              
+START TRANSACTION     | Start processing the order                      
+SAVEPOINT             | Create a checkpoint                             
+ROLLBACK TO SAVEPOINT | Undo the later part and retry                   
+RELEASE SAVEPOINT     | Remove the checkpoint                           
+COMMIT                | Order successfully completed → permanently save 
+ROLLBACK              | Order failed → cancel all transaction changes   
 
  Concept                                 Purpose                                       
 Transaction      | Keep a logical unit of work safe/consistent   
@@ -183,4 +179,30 @@ Stored Procedure | Reusable database operation called explicitly
 View             | Stored query/virtual-table abstraction        
 
 
+Example for TCL:
+START TRANSACTION;
 
+UPDATE accounts
+SET balance = balance - 5000
+WHERE account_id = 101;
+
+SAVEPOINT after_debit;
+
+UPDATE accounts
+SET balance = balance + 5000
+WHERE account_id = 102;
+
+UPDATE accounts
+SET balance = balance - 500
+WHERE account_id = 101;
+
+ROLLBACK TO SAVEPOINT after_debit;
+
+RELEASE SAVEPOINT after_debit;
+
+INSERT INTO transactions
+(account_id_from, account_id_to, amount)
+VALUES
+(101, 102, 5000);
+
+COMMIT;
