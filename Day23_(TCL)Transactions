@@ -1,0 +1,186 @@
+╰┈➤ MySQL Transactions
+
+1. Start with this problem
+"You open Zepto, place a ₹750 order and pay successfully. Money is deducted, but due to a server/database failure, the order is never created. Is that acceptable?
+
+An order operation may involve several database changes:
+1. Create order
+2. Create order items
+3. Reduce inventory
+4. Record payment
+5. Update coupon usage
+-- Ivi These aren't really five independent business operations
+From the customer's perspective: Either the complete order succeeds, or the complete order fails
+That is exactly where a 𝕋𝕣𝕒𝕟𝕤𝕒𝕔𝕥𝕚𝕠𝕟𝕤 comes in OKKK
+
+-> A transaction is a group of database operations treated as one logical unit of work
+=> A transaction is a sequence of one or more database operations executed as a single logical unit, where changes can be committed if successful or rolled back if the operation fails
+
+ALL operations succeed             Something fails
+        |                                 |
+      COMMIT                           ROLLBACK
+
+-- MySQL Syntax
+START TRANSACTION;
+-- SQL statements
+COMMIT;
+
+If something goes wrong:
+START TRANSACTION;
+-- SQL statements
+ROLLBACK;    
+
+-- Hands-On Example cheyandii
+Create an account table:
+CREATE TABLE accounts (
+    account_id INT PRIMARY KEY,
+    customer_name VARCHAR(100),
+    balance DECIMAL(10,2)
+);
+
+Insert:
+INSERT INTO accounts VALUES
+(101, 'Bhavani', 10000),
+(102, 'Priya', 5000);
+
+Suppose Bhavani transfers ₹2,000 to Priya
+We need two operations:
+Bhavani  -> -₹2000
+Priya  -> +₹2000
+
+Without transaction:
+UPDATE accounts
+SET balance = balance - 2000
+WHERE account_id = 101;
+
+UPDATE accounts
+SET balance = balance + 2000
+WHERE account_id = 102;
+
+Imagine: Statement 1 ->SUCCESS -  Database/server problem
+Statement 2 -> NEVER EXECUTED  - Bhavani lost ₹2,000 - Priya didn't receive ₹2,000 - Your database is inconsistent
+
+-- Then Now Add a Transaction
+START TRANSACTION;
+                                                  START TRANSACTION
+UPDATE accounts                                          |
+SET balance = balance - 2000                        Deduct ₹2000
+WHERE account_id = 101;                                  |
+                                                    Add ₹2000
+UPDATE accounts                                          |
+SET balance = balance + 2000                  Everything successful?
+WHERE account_id = 102;                                  |
+                                                    COOMIT
+COMMIT;                                -- Now both changes are treated as part of one transaction
+
+
+COMMIT; -- Make the transaction's changes permanent (Confirm / Save)
+eXAMPLE:
+START TRANSACTION;
+
+UPDATE accounts
+SET balance = balance - 2000
+WHERE account_id = 101;
+
+COMMIT; -- Once committed, you don't use a normal ROLLBACK afterward to undo that completed transaction
+
+ROLLBACK?: Undo changes made during the current transaction since its beginning or relevant savepoin(Cancel /Undo)
+Esxample: START TRANSACTION;
+
+UPDATE accounts
+SET balance = balance - 2000
+WHERE account_id = 101;
+
+SELECT * FROM accounts;
+
+ ROLLBACK;
+SELECT * FROM accounts;
+
+-- Zepto Real-Time Transaction chedhaama
+Kaveru Customer places an order for:
+Milk     × 2
+Bread    × 1
+Eggs     × 1
+
+START TRANSACTION;
+
+INSERT INTO orders
+(order_id, customer_id, total_amount, status)               Create Order
+VALUES                                                           |
+(1001, 101, 450.00, 'PLACED');                           Create Order Items
+                                                                 |
+INSERT INTO order_items                                   Reduce Inventory
+(order_id, product_id, quantity)                                 |
+VALUES                                                    Everything successful
+(1001, 501, 2);                                                  |
+                                                            COMMIt
+UPDATE inventory
+SET quantity = quantity - 2
+WHERE product_id = 501;
+
+COMMIT;
+
+If the operation cannot safely complete: ROLLBACK; and the transaction's changes are undone
+
+Enduku ee Companies Need Transactions: 
+-- Transactions matter whenever multiple database changes belong to one business operation
+ Industry                Transaction enduku                           
+ Banking        | Debit + Credit                            
+ E-commerce     | Order + Payment + Inventory               
+ Food delivery  | Order + Restaurant + Payment              
+ Ticket booking | Seat reservation + Payment + Booking      
+ Payroll        | Salary processing + payment records       
+ Wallet         | Sender debit + receiver credit            
+ Inventory      | Sale + stock reduction                    
+ College        | Enrollment + seat allocation + fee record 
+Saree answer cheyandi:: If operation 3 fails after operations 1 and 2 succeeded, can I safely leave 1 and 2 in the database?
+
+ACID Properties
+A -> Atomicity (All or nothing)
+C -> Consistency ( Valid state -> Valid state)
+-> A transaction should take the database from one valid state to another valid state while respecting defined rules and constraints
+I -> Isolation
+-> Controlling how concurrent transactions can observe and interfere with one another
+D -> Durability
+-> The committed result survives failures/recovery
+
+╰┈➤ SAVEPOINT
+Suppose:
+Operation 1
+Operation 2
+Operation 3
+Operation 4
+
+Something goes wrong at operation 4 - Sometimes you don't want to return all the way to the beginning
+
+Example:
+START TRANSACTION;                                       START
+                                                           |
+UPDATE accounts                              SAVEPOINT <- checkpoint
+SET balance = balance - 1000                               |
+WHERE account_id = 101;                               Operatiom
+                                                           |
+SAVEPOINT payment_done;                           Something Unwanted
+                                                           |
+INSERT INTO transaction_log                      ROLLBACK TO SAVEPOINT
+VALUES (...);
+
+ROLLBACK TO SAVEPOINT payment_done;
+COMMIT;
+
+-- Overallga chudandii
+START TRANSACTION; -- Start transaction
+COMMIT; -- Make changes permanent
+ROLLBACK; -- Undo the current transaction's uncommitted changes
+SAVEPOINT sp1; -- Create a point inside the transaction
+ROLLBACK TO SAVEPOINT sp1; -- Return to that point
+RELEASE SAVEPOINT sp1; -- Remove the savepoint
+
+ Concept                                 Purpose                                       
+Transaction      | Keep a logical unit of work safe/consistent   
+Trigger          | Automatically react to table events           
+Stored Procedure | Reusable database operation called explicitly 
+View             | Stored query/virtual-table abstraction        
+
+
+
