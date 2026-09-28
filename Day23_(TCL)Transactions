@@ -146,20 +146,19 @@ Operation 1
 Operation 2
 Operation 3
 Operation 4
-
-Something goes wrong at operation 4 - Sometimes you don't want to return all the way to the beginning
+-- Something goes wrong at operation 4 - Sometimes you don't want to return all the way to the beginning
 
 Example:
 START TRANSACTION;                                       START
                                                            |
 UPDATE accounts                              SAVEPOINT <- checkpoint
 SET balance = balance - 1000                               |
-WHERE account_id = 101;                               Operatiom
+WHERE account_id = 101;                               Operation
                                                            |
 SAVEPOINT payment_done;                           Something Unwanted
                                                            |
 INSERT INTO transaction_log                      ROLLBACK TO SAVEPOINT
-VALUES (...);
+VALUES (...); -- error
 
 ROLLBACK TO SAVEPOINT payment_done;
 COMMIT;
@@ -169,8 +168,8 @@ START TRANSACTION     | Start processing the order
 SAVEPOINT             | Create a checkpoint                             
 ROLLBACK TO SAVEPOINT | Undo the later part and retry                   
 RELEASE SAVEPOINT     | Remove the checkpoint                           
-COMMIT                | Order successfully completed → permanently save 
-ROLLBACK              | Order failed → cancel all transaction changes   
+COMMIT                | Order successfully completed- permanently save 
+ROLLBACK              | Order failed- cancel all transaction changes   
 
  Concept                                 Purpose                                       
 Transaction      | Keep a logical unit of work safe/consistent   
