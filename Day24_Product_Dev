@@ -1,0 +1,165 @@
+REAL PROBLEM
+     |
+ONE FEATURE
+     |
+DATABASE
+     |
+PYTHON API
+     |
+FRONTEND
+     |
+AI
+    |
+TEST
+    |
+DEPLOY
+    |
+MULTIPLE FEATURES
+    |
+PRODUCT
+
+What should our system do?
+A student uploads: Resume + Job Description
+
+System returns: Match Score: 78%
+Strong Skills: Python
+              SQL
+              React
+Missing Skills:
+Docker
+AWS
+
+Suggestions: Learn Docker
+            Add project X
+            Improve resume section Y
+
+ HTML/CSS/JS or React | User interface 
+ Python               | Business logic/API 
+ MySQL                | Persistent data 
+ AI/LLM               | Resume/JD analysis 
+ REST API             | Communication 
+ Git                  | Version control 
+
+Frontend - HTTP Request
+  |
+Python Backend - Business Logic
+  |
+MySQL + AI - Response
+  |
+Frontend
+
+
+## Define the User Journey: If I am a user, what exactly do I do?
+1. Open application
+2. Upload Resume
+3. Paste Job Description
+4. Click "Analyze"
+5. Backend receives data
+6. Resume/JD processed
+7. AI analyzes compatibility
+8. Result stored in MySQL
+9. Frontend displays result
+
+## Convert Workflow Into Features(Don't build everything)
+-- For Version 1:
+Feature 1: Analyze Resume
+Feature 2: Save Analysis History
+Feature 3: View Previous Analyses
+Don't add: Login
+            Payments
+            Admin dashboard
+            Notifications
+            Chatbot
+            100 AI agents
+            Mobile app
+
+### Start With the Database [What information must our system remember?]
+users | resumes | job_descriptions | analyses
+
+-- For a first version, even:
+## analyses
+id
+resume_text
+job_description
+match_score
+strengths
+missing_skills
+suggestions
+created_at
+
+CREATE DATABASE resume_analyzer;
+USE resume_analyzer;
+
+CREATE TABLE analyses (
+    analysis_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    resume_text LONGTEXT NOT NULL,
+    job_description LONGTEXT NOT NULL,
+    match_score DECIMAL(5,2),
+    strengths JSON,
+    missing_skills JSON,
+    suggestions JSON,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+# Design the API(How will the frontend talk to Python?)
+For example: POST /api/analyze
+# Request
+{
+  "resume": "...",
+  "job_description": "..."
+}
+
+# Response
+{
+  "match_score": 78,
+  "strengths": [
+    "Python",
+    "SQL",
+    "React"
+  ],
+  "missing_skills": [
+    "Docker",
+    "AWS"
+  ],
+  "suggestions": [
+    "Add Docker project experience"
+  ]
+}
+
+# Build the Python Backend(use Flask or FastAPI)
+resume-analyzer/
+|
+backend/ [What responsibility does each file have?]
+    ├── main.py
+    ├── database.py
+    ├── models.py
+    ├── schemas.py
+    |-- requirements.txt
+    ├── routes/
+    │   └─ analysis.py
+    ├── services/
+        └── ai_service.py
+|-- frontend/
+# Build the API Without AI First(Don't integrate AI immediately)
+
+##Setup Python backend
+1. Create virtual environment: python -m venv venv
+Activate it: venv\Scripts\activate
+Install: pip install fastapi uvicorn mysql-connector-python python-dotenv (Later we'll add the AI SDK)
+
+# Build the first backend
+Create: backend/main.py
+Start with:
+from fastapi import FastAPI
+app = FastAPI()
+@app.get("/")
+def home():
+    return {
+        "message": "Resume Analyzer API is running"
+    }
+
+Run: uvicorn main:app --reload
+Now open: http://127.0.0.1:8000
+Ceeck: http://127.0.0.1:8000/docs (FastAPI automatically gives us API documentation)
+
+# Build the API before AI (DON'T ADD AI YET)
